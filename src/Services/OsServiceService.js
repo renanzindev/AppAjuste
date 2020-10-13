@@ -32,6 +32,15 @@ const OsServiceService = {
       return [false, error];
     }
   },
+  closeService: async (data) => {
+    try {
+      const result = await Api.post(`${moduleIndex}/prefechamento/novo`, data);
+
+      return result.ok;
+    } catch (error) {
+      return error;
+    }
+  },
 };
 
 export default OsServiceService;

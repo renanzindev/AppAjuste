@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { Button, Card, Icon, Input, Text } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,12 +11,12 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 
 export default function CloseServiceView() {
   const { user } = React.useContext(AuthContext);
-  const [serviceCode, setServiceCode] = React.useState('009149324474');
+  const [serviceCode, setServiceCode] = React.useState('');
   const [osService, setOsService] = React.useState(null);
   const [productionWorkerId, setProductionWorkerId] = React.useState(null);
   const [loadingService, setLoadingService] = React.useState(false);
   const [loadingProduct, setLoadingProduct] = React.useState(false);
-  const [productCode, setProductCode] = React.useState('003238700616');
+  const [productCode, setProductCode] = React.useState('');
   const [extraProductCode, setExtraProductCode] = React.useState('');
   const [errorMessageService, setErrorMessageService] = React.useState('');
   const [errorMessageProduct, setErrorMessageProduct] = React.useState('');
@@ -39,10 +39,11 @@ export default function CloseServiceView() {
   };
 
   const clearForm = () => {
-    setLoadingService(true);
+    setLoadingService(false);
+    setLoadingProduct(false);
     setOsService(null);
     setProductionWorkerId(null);
-    setProductCode('003238700616');
+    setProductCode('');
     setExtraProductCode('');
     setErrorMessageService('');
     setErrorMessageProduct('');
@@ -62,6 +63,7 @@ export default function CloseServiceView() {
   const searchOsService = async () => {
     if (serviceCode.length === 12) {
       clearForm();
+      setLoadingService(true);
 
       const data = {
         codigo_servico: serviceCode,
@@ -112,6 +114,33 @@ export default function CloseServiceView() {
         setErrorMessageProduct(response);
       }
       setLoadingProduct(false);
+    }
+  };
+
+  const CloseService = async () => {
+    setClosingService(true);
+
+    const products = osService.servico.produtos.map(
+      (product) => product.codigo
+    );
+    if (extraProductCode) products.push(extraProductCode);
+
+    const data = {
+      os_servico_id: osService.id,
+      produtivo_id: productionWorkerId,
+      produtos: products,
+    };
+    try {
+      await OsServiceService.closeService(data);
+      Alert.alert('Sucesso', 'Fechamento Registrado com sucesso!');
+      clearForm();
+      setServiceCode('');
+    } catch (error) {
+      Alert.alert(
+        'Erro',
+        'Ocorreu um erro duranto o registro, verifique os dados informados e tente novamente!'
+      );
+      setClosingService(false);
     }
   };
 
@@ -196,7 +225,9 @@ export default function CloseServiceView() {
                     <Text style={styles.bold}>VEÍCULO:</Text>{' '}
                     {osService.os.cliente_carro.modelo.marca.nome}{' '}
                     {osService.os.cliente_carro.modelo.nome}{' '}
-                    {osService.os.cliente_carro.submodelo.nome}{' '}
+                    {osService.os.cliente_carro.submodelo
+                      ? `${osService.os.cliente_carro.submodelo.nome} `
+                      : null}
                     {osService.os.cliente_carro.cor.nome}
                   </Text>
                   <Text>
@@ -332,8 +363,8 @@ export default function CloseServiceView() {
                 closingService
               }
               disabledStyle={styles.confirmButtonDisabled}
-              loading={loadingProduct}
-              onPress={searchProduct}
+              loading={closingService}
+              onPress={CloseService}
             />
           </Card>
         ) : null}
