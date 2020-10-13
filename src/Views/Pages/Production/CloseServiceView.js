@@ -1,0 +1,425 @@
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, Card, Icon, Input, Text } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Moment from 'moment';
+import { Picker } from '@react-native-community/picker';
+import BottomTabNavigator from '../../../Components/BottomTabNavigator';
+import OsServiceService from '../../../Services/OsServiceService';
+import { AuthContext } from '../../../Contexts/AuthContext';
+
+export default function CloseServiceView() {
+  const { user } = React.useContext(AuthContext);
+  const [serviceCode, setServiceCode] = React.useState('009149324474');
+  const [osService, setOsService] = React.useState(null);
+  const [productionWorkerId, setProductionWorkerId] = React.useState(null);
+  const [loadingService, setLoadingService] = React.useState(false);
+  const [loadingProduct, setLoadingProduct] = React.useState(false);
+  const [productCode, setProductCode] = React.useState('003238700616');
+  const [extraProductCode, setExtraProductCode] = React.useState('');
+  const [errorMessageService, setErrorMessageService] = React.useState('');
+  const [errorMessageProduct, setErrorMessageProduct] = React.useState('');
+  const [productsCofirmed, setProductsCofirmed] = React.useState(false);
+  const [closingService, setClosingService] = React.useState(false);
+
+  const filmSubgroups = [1, 5];
+
+  const defineInitialProductionWorker = () => {
+    if (osService && user) {
+      const productionWorkers = osService.produtivos.filter(
+        (productionWorker) => productionWorker.id
+      );
+
+      if (productionWorkers.includes(user.funcionario_id)) {
+        setProductionWorkerId(user.funcionario_id);
+      }
+    }
+    setProductionWorkerId(null);
+  };
+
+  const clearForm = () => {
+    setLoadingService(true);
+    setOsService(null);
+    setProductionWorkerId(null);
+    setProductCode('003238700616');
+    setExtraProductCode('');
+    setErrorMessageService('');
+    setErrorMessageProduct('');
+    setProductsCofirmed(false);
+    setClosingService(false);
+  };
+
+  const confirmProducts = () => {
+    let confirm = true;
+    osService.servico.produtos.forEach((product) => {
+      if (!product.codigo) confirm = false;
+    });
+
+    setProductsCofirmed(confirm);
+  };
+
+  const searchOsService = async () => {
+    if (serviceCode.length === 12) {
+      clearForm();
+
+      const data = {
+        codigo_servico: serviceCode,
+      };
+
+      const [ok, response] = await OsServiceService.search(data);
+      if (ok) {
+        setOsService(response);
+        defineInitialProductionWorker();
+      } else {
+        setErrorMessageService(response);
+      }
+      setLoadingService(false);
+    }
+  };
+
+  const searchProduct = async () => {
+    if (productCode.length === 12) {
+      setLoadingProduct(true);
+      setErrorMessageProduct('');
+
+      const data = {
+        os_servico_id: osService.id,
+        codigo_produto: productCode,
+      };
+
+      const [ok, response] = await OsServiceService.searchProduct(data);
+      if (ok) {
+        console.log(response);
+        let found = false;
+        osService.servico.produtos.forEach((product) => {
+          if (product.id === response.produto_id && !product.codigo) {
+            product.codigo = response.codigo;
+            found = true;
+          }
+
+          if (
+            !found &&
+            filmSubgroups.includes(osService.servico.subgrupo_servico_id) &&
+            !extraProductCode
+          ) {
+            setExtraProductCode(response.codigo);
+          }
+          setProductCode('');
+          confirmProducts();
+        });
+      } else {
+        setErrorMessageProduct(response);
+      }
+      setLoadingProduct(false);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Card>
+          <View style={styles.barcodeContainer}>
+            <View style={styles.barcodeInputContainer}>
+              <Input
+                placeholder="Código do Serviço"
+                autoCapitalize="none"
+                onChangeText={setServiceCode}
+                value={serviceCode}
+                keyboardType="numeric"
+                maxLength={12}
+              />
+            </View>
+            <View style={styles.barcodeButtonContainer}>
+              <Button
+                type="solid"
+                icon={
+                  <Icon
+                    name="barcode-scan"
+                    type="material-community"
+                    color="white"
+                  />
+                }
+                buttonStyle={styles.barcodeButton}
+              />
+            </View>
+          </View>
+          {errorMessageService ? (
+            <Text style={styles.textError}>{errorMessageService}</Text>
+          ) : null}
+          <Button
+            type="solid"
+            title="CONSULTAR SERVIÇO"
+            color="white"
+            buttonStyle={styles.searchServiceButton}
+            disabled={serviceCode.length !== 12 || loadingService}
+            disabledStyle={styles.searchServiceButtonDisabled}
+            loading={loadingService}
+            onPress={searchOsService}
+          />
+        </Card>
+        {osService ? (
+          <Card>
+            <View>
+              <Card.Title style={styles.cardTitle}>DADOS DA OS</Card.Title>
+              <View style={styles.well}>
+                <Text style={styles.bold}>
+                  {osService.os.concessionaria.nome} -{' '}
+                  {osService.os.departamento.sigla}
+                </Text>
+                <Text>
+                  <Text style={styles.bold}>PREVISÃO DE ENTREGA:</Text>{' '}
+                  {Moment(osService.os.data_entrega).format('DD/MM/YY HH:mm')}
+                </Text>
+                <Text>
+                  <Text style={styles.bold}>OS:</Text>{' '}
+                  {osService.os.os_concessionaria}
+                </Text>
+                <Text>
+                  <Text style={styles.bold}>DATA DA OS:</Text>{' '}
+                  {Moment(osService.os.created_at).format('DD/MM/YY HH:mm')}
+                </Text>
+                <Text>
+                  <Text style={styles.bold}>CLIENTE:</Text>{' '}
+                  {osService.os.cliente ? osService.os.cliente.nome : null}
+                </Text>
+              </View>
+            </View>
+
+            {osService.os.cliente_carro ? (
+              <View>
+                <Card.Title style={styles.cardTitle}>
+                  DADOS DO VEÍCULO
+                </Card.Title>
+                <View style={styles.well}>
+                  <Text>
+                    <Text style={styles.bold}>VEÍCULO:</Text>{' '}
+                    {osService.os.cliente_carro.modelo.marca.nome}{' '}
+                    {osService.os.cliente_carro.modelo.nome}{' '}
+                    {osService.os.cliente_carro.submodelo.nome}{' '}
+                    {osService.os.cliente_carro.cor.nome}
+                  </Text>
+                  <Text>
+                    <Text style={styles.bold}>CHASSI:</Text>{' '}
+                    {osService.os.cliente_carro
+                      ? osService.os.cliente_carro.chassi
+                      : null}
+                  </Text>
+                  <Text>
+                    <Text style={styles.bold}>PLACA:</Text>{' '}
+                    {osService.os.cliente_carro
+                      ? osService.os.cliente_carro.placa
+                      : null}
+                  </Text>
+                </View>
+              </View>
+            ) : null}
+
+            <View>
+              <Card.Title style={styles.cardTitle}>DADOS DO SERVIÇO</Card.Title>
+              <View style={styles.well}>
+                <Text>
+                  <Text style={styles.bold}>SERVIÇO:</Text>{' '}
+                  {osService.servico.nome}{' '}
+                  {osService.tonalidade ? osService.tonalidade.nome : null}
+                </Text>
+                <Text style={styles.label}>PRODUTIVO:</Text>
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={productionWorkerId}
+                    style={{ height: 50 }}
+                    mode="dropdown"
+                    onValueChange={setProductionWorkerId}
+                  >
+                    <Picker.Item
+                      key={osService.produtivos.length + 1}
+                      label="SELECIONE O PRODUTIVO"
+                      value={null}
+                    />
+                    {osService.produtivos.map((productionWorker, i) => (
+                      <Picker.Item
+                        key={i}
+                        label={productionWorker.nome}
+                        value={productionWorker.id}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+                <Text style={styles.label}>PRODUTO(S):</Text>
+                <View style={styles.well}>
+                  {osService.servico.produtos.map((product, i) => (
+                    <Text
+                      key={i}
+                      style={
+                        product.codigo ? styles.textSuccess : styles.textError
+                      }
+                    >
+                      {product.nome}: {product.codigo}
+                    </Text>
+                  ))}
+                  {filmSubgroups.includes(
+                    osService.servico.subgrupo_servico_id
+                  ) ? (
+                    <Text style={styles.textInfo}>
+                      BOBINA ADICIONAL(OPCIONAL): {extraProductCode}
+                    </Text>
+                  ) : null}
+                </View>
+                <View />
+                <View style={styles.barcodeContainer}>
+                  <View style={styles.barcodeInputContainer}>
+                    <Input
+                      placeholder="Código do Produto"
+                      autoCapitalize="none"
+                      onChangeText={setProductCode}
+                      value={productCode}
+                      keyboardType="numeric"
+                      maxLength={12}
+                      inputContainerStyle={[
+                        styles.pickerContainer,
+                        { marginLeft: 0 },
+                      ]}
+                      containerStyle={{ paddingLeft: 5 }}
+                    />
+                  </View>
+                  <View style={styles.barcodeButtonContainer}>
+                    <Button
+                      type="solid"
+                      icon={
+                        <Icon
+                          name="barcode-scan"
+                          type="material-community"
+                          color="white"
+                        />
+                      }
+                      buttonStyle={styles.barcodeButton}
+                    />
+                  </View>
+                </View>
+                {errorMessageProduct ? (
+                  <Text style={styles.textError}>{errorMessageProduct}</Text>
+                ) : null}
+                <Button
+                  type="solid"
+                  title="CONSULTAR PRODUTO"
+                  color="white"
+                  buttonStyle={styles.searchServiceButton}
+                  disabled={productCode.length !== 12 || loadingProduct}
+                  disabledStyle={styles.searchServiceButtonDisabled}
+                  loading={loadingProduct}
+                  onPress={searchProduct}
+                />
+              </View>
+            </View>
+            {!productionWorkerId ? (
+              <Text style={[styles.textError, styles.lineSpaced]}>
+                Informe o produtivo do serviço!
+              </Text>
+            ) : null}
+            {osService.servico.produtos.length && !productsCofirmed ? (
+              <Text style={[styles.textError, styles.lineSpaced]}>
+                Informe o(s) código(s) do(s) produto(s)!
+              </Text>
+            ) : null}
+            <Button
+              type="solid"
+              title="FECHAR SERVIÇO"
+              color="white"
+              buttonStyle={styles.confirmButton}
+              disabled={
+                !productionWorkerId ||
+                (osService.servico.produtos.length && !productsCofirmed) ||
+                closingService
+              }
+              disabledStyle={styles.confirmButtonDisabled}
+              loading={loadingProduct}
+              onPress={searchProduct}
+            />
+          </Card>
+        ) : null}
+      </ScrollView>
+      <BottomTabNavigator />
+    </SafeAreaView>
+  );
+}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  barcodeContainer: {
+    flexDirection: 'row',
+  },
+  barcodeInputContainer: {
+    width: '80%',
+  },
+  barcodeButtonContainer: {
+    width: '20%',
+  },
+  barcodeButton: {
+    height: 50,
+  },
+  searchServiceButton: {
+    height: 50,
+  },
+  searchServiceButtonDisabled: {
+    backgroundColor: '#d2e7f8',
+  },
+  cardTitle: {
+    textAlign: 'left',
+    fontSize: 20,
+  },
+  cardContent: {
+    textAlign: 'left',
+    fontSize: 18,
+  },
+  well: {
+    backgroundColor: '#f5f5f5',
+    marginTop: 0,
+    marginBottom: 30,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
+  },
+  bold: {
+    fontWeight: 'bold',
+    lineHeight: 25,
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    lineHeight: 25,
+    marginTop: 20,
+    marginBottom: 0,
+  },
+  pickerContainer: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#CBD5DD',
+    borderRadius: 2,
+    backgroundColor: 'white',
+  },
+  textError: {
+    color: 'red',
+    textTransform: 'uppercase',
+  },
+  textSuccess: {
+    color: '#8bc34a',
+    textTransform: 'uppercase',
+  },
+  textInfo: {
+    color: '#3B799A',
+    textTransform: 'uppercase',
+  },
+  confirmButton: {
+    marginTop: 10,
+    height: 60,
+    backgroundColor: '#8bc34a',
+  },
+  confirmButtonDisabled: {
+    backgroundColor: '#e7f3da',
+  },
+  lineSpaced: {
+    lineHeight: 25,
+  },
+});
