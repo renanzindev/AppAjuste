@@ -9,6 +9,7 @@ import TrackableShippingView from '../../Pages/Stock/TrackableShippingView';
 import LogoutButton from '../../../Components/LogoutButton';
 import FaqView from '../../Pages/FaqView';
 import { AuthContext } from '../../../Contexts/AuthContext';
+import ClosedServicesView from '../../Pages/Production/ClosedServicesView';
 
 const Drawer = createDrawerNavigator();
 
@@ -63,6 +64,16 @@ export default function SideMenuNavigator() {
                     type="material-community"
                     size={20}
                   />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="ClosedServicesView"
+              component={ClosedServicesView}
+              options={{
+                drawerLabel: 'Últimos Fechamentos',
+                drawerIcon: () => (
+                  <Icon name="list" type="material" size={20} />
                 ),
               }}
             />

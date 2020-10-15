@@ -8,6 +8,15 @@ Utils.defaultModuleIndex().then((result) => {
 });
 
 const OsServiceService = {
+  index: async () => {
+    try {
+      const result = await Api.get(`${moduleIndex}/prefechamento`);
+
+      return [result.ok, result.data];
+    } catch (error) {
+      return [false, error];
+    }
+  },
   search: async (data) => {
     try {
       const result = await Api.post(

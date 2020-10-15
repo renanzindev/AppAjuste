@@ -1,19 +1,20 @@
 import React from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Keyboard } from 'react-native';
 import { Button, Card, Icon, Input, Text } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
 import { Picker } from '@react-native-community/picker';
+import { useRoute } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import OsServiceService from '../../../Services/OsServiceService';
 import { AuthContext } from '../../../Contexts/AuthContext';
 
 export default function CloseServiceView() {
-  const { user } = React.useContext(AuthContext);
+  const { getUser } = React.useContext(AuthContext);
   const [serviceCode, setServiceCode] = React.useState('');
   const [osService, setOsService] = React.useState(null);
-  const [productionWorkerId, setProductionWorkerId] = React.useState(null);
+  const [productionWorkerId, setProductionWorkerId] = React.useState('');
   const [loadingService, setLoadingService] = React.useState(false);
   const [loadingProduct, setLoadingProduct] = React.useState(false);
   const [productCode, setProductCode] = React.useState('');
@@ -22,27 +23,28 @@ export default function CloseServiceView() {
   const [errorMessageProduct, setErrorMessageProduct] = React.useState('');
   const [productsCofirmed, setProductsCofirmed] = React.useState(false);
   const [closingService, setClosingService] = React.useState(false);
+  const [user, setUser] = React.useState(null);
 
+  const route = useRoute();
   const filmSubgroups = [1, 5];
 
   const defineInitialProductionWorker = () => {
+    setProductionWorkerId('');
     if (osService && user) {
-      const productionWorkers = osService.produtivos.filter(
+      const productionWorkers = osService.produtivos.map(
         (productionWorker) => productionWorker.id
       );
-
-      if (productionWorkers.includes(user.funcionario_id)) {
-        setProductionWorkerId(user.funcionario_id);
+      if (productionWorkers.includes(user.funcionario.id)) {
+        setProductionWorkerId(user.funcionario.id.toString());
       }
     }
-    setProductionWorkerId(null);
   };
 
   const clearForm = () => {
     setLoadingService(false);
     setLoadingProduct(false);
     setOsService(null);
-    setProductionWorkerId(null);
+    setProductionWorkerId('');
     setProductCode('');
     setExtraProductCode('');
     setErrorMessageService('');
@@ -62,6 +64,7 @@ export default function CloseServiceView() {
 
   const searchOsService = async () => {
     if (serviceCode.length === 12) {
+      Keyboard.dismiss();
       clearForm();
       setLoadingService(true);
 
@@ -71,7 +74,7 @@ export default function CloseServiceView() {
 
       const [ok, response] = await OsServiceService.search(data);
       if (ok) {
-        setOsService(response);
+        await setOsService(response);
         defineInitialProductionWorker();
       } else {
         setErrorMessageService(response);
@@ -143,6 +146,26 @@ export default function CloseServiceView() {
       setClosingService(false);
     }
   };
+
+  React.useEffect(() => {
+    const initialLoad = async () => {
+      const loggedUser = await getUser();
+      await setUser(loggedUser);
+      defineInitialProductionWorker();
+    };
+    initialLoad();
+  }, [osService]);
+
+  React.useEffect(() => {
+    if (route.params?.pcpServiceCode) {
+      clearForm();
+      setServiceCode(route.params?.pcpServiceCode);
+    }
+  }, [route.params?.pcpServiceCode]);
+
+  React.useEffect(() => {
+    searchOsService();
+  }, [serviceCode]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -262,11 +285,13 @@ export default function CloseServiceView() {
                     mode="dropdown"
                     onValueChange={setProductionWorkerId}
                   >
-                    <Picker.Item
-                      key={osService.produtivos.length + 1}
-                      label="SELECIONE O PRODUTIVO"
-                      value={null}
-                    />
+                    {!productionWorkerId ? (
+                      <Picker.Item
+                        key={0}
+                        label="SELECIONE O PRODUTIVO"
+                        value={null}
+                      />
+                    ) : null}
                     {osService.produtivos.map((productionWorker, i) => (
                       <Picker.Item
                         key={i}
@@ -276,70 +301,78 @@ export default function CloseServiceView() {
                     ))}
                   </Picker>
                 </View>
-                <Text style={styles.label}>PRODUTO(S):</Text>
-                <View style={styles.well}>
-                  {osService.servico.produtos.map((product, i) => (
-                    <Text
-                      key={i}
-                      style={
-                        product.codigo ? styles.textSuccess : styles.textError
-                      }
-                    >
-                      {product.nome}: {product.codigo}
-                    </Text>
-                  ))}
-                  {filmSubgroups.includes(
-                    osService.servico.subgrupo_servico_id
-                  ) ? (
-                    <Text style={styles.textInfo}>
-                      BOBINA ADICIONAL(OPCIONAL): {extraProductCode}
-                    </Text>
-                  ) : null}
-                </View>
-                <View />
-                <View style={styles.barcodeContainer}>
-                  <View style={styles.barcodeInputContainer}>
-                    <Input
-                      placeholder="Código do Produto"
-                      autoCapitalize="none"
-                      onChangeText={setProductCode}
-                      value={productCode}
-                      keyboardType="numeric"
-                      maxLength={12}
-                      inputContainerStyle={[
-                        styles.pickerContainer,
-                        { marginLeft: 0 },
-                      ]}
-                      containerStyle={{ paddingLeft: 5 }}
-                    />
-                  </View>
-                  <View style={styles.barcodeButtonContainer}>
+                {osService.servico?.produtos.length ? (
+                  <View>
+                    <Text style={styles.label}>PRODUTO(S):</Text>
+                    <View style={styles.well}>
+                      {osService.servico.produtos.map((product, i) => (
+                        <Text
+                          key={i}
+                          style={
+                            product.codigo
+                              ? styles.textSuccess
+                              : styles.textError
+                          }
+                        >
+                          {product.nome}: {product.codigo}
+                        </Text>
+                      ))}
+                      {filmSubgroups.includes(
+                        osService.servico.subgrupo_servico_id
+                      ) ? (
+                        <Text style={styles.textInfo}>
+                          BOBINA ADICIONAL(OPCIONAL): {extraProductCode}
+                        </Text>
+                      ) : null}
+                    </View>
+                    <View />
+                    <View style={styles.barcodeContainer}>
+                      <View style={styles.barcodeInputContainer}>
+                        <Input
+                          placeholder="Código do Produto"
+                          autoCapitalize="none"
+                          onChangeText={setProductCode}
+                          value={productCode}
+                          keyboardType="numeric"
+                          maxLength={12}
+                          inputContainerStyle={[
+                            styles.pickerContainer,
+                            { marginLeft: 0 },
+                          ]}
+                          containerStyle={{ paddingLeft: 5 }}
+                        />
+                      </View>
+                      <View style={styles.barcodeButtonContainer}>
+                        <Button
+                          type="solid"
+                          icon={
+                            <Icon
+                              name="barcode-scan"
+                              type="material-community"
+                              color="white"
+                            />
+                          }
+                          buttonStyle={styles.barcodeButton}
+                        />
+                      </View>
+                    </View>
+                    {errorMessageProduct ? (
+                      <Text style={styles.textError}>
+                        {errorMessageProduct}
+                      </Text>
+                    ) : null}
                     <Button
                       type="solid"
-                      icon={
-                        <Icon
-                          name="barcode-scan"
-                          type="material-community"
-                          color="white"
-                        />
-                      }
-                      buttonStyle={styles.barcodeButton}
+                      title="CONSULTAR PRODUTO"
+                      color="white"
+                      buttonStyle={styles.searchServiceButton}
+                      disabled={productCode.length !== 12 || loadingProduct}
+                      disabledStyle={styles.searchServiceButtonDisabled}
+                      loading={loadingProduct}
+                      onPress={searchProduct}
                     />
                   </View>
-                </View>
-                {errorMessageProduct ? (
-                  <Text style={styles.textError}>{errorMessageProduct}</Text>
                 ) : null}
-                <Button
-                  type="solid"
-                  title="CONSULTAR PRODUTO"
-                  color="white"
-                  buttonStyle={styles.searchServiceButton}
-                  disabled={productCode.length !== 12 || loadingProduct}
-                  disabledStyle={styles.searchServiceButtonDisabled}
-                  loading={loadingProduct}
-                  onPress={searchProduct}
-                />
               </View>
             </View>
             {!productionWorkerId ? (
@@ -388,12 +421,14 @@ const styles = StyleSheet.create({
   },
   barcodeButton: {
     height: 50,
+    backgroundColor: '#00bcd4',
   },
   searchServiceButton: {
     height: 50,
+    backgroundColor: '#00bcd4',
   },
   searchServiceButtonDisabled: {
-    backgroundColor: '#d2e7f8',
+    backgroundColor: '#ccf1f6',
   },
   cardTitle: {
     textAlign: 'left',

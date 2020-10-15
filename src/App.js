@@ -19,7 +19,6 @@ export default () => {
   const [loggedIn, setLoggendIn] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
   const [displayModules, setDisplayModules] = React.useState(false);
-  const [user, setUser] = React.useState([]);
   const [userModules, setUserModules] = React.useState([]);
   const [defaultModule, setDefaultModule] = React.useState([]);
   const [search, setSearch] = React.useState('');
@@ -34,7 +33,6 @@ export default () => {
   const getUserModules = async () => {
     await authService.defineTabs();
     const loggedUser = await authService.getUser();
-    setUser(loggedUser);
     setUserModules(loggedUser.modules);
   };
 
@@ -83,7 +81,6 @@ export default () => {
       setDisplayModules,
       searchInput,
       userModules,
-      user,
     }),
     [defaultModule, search, displaySearch, displayModules]
   );
