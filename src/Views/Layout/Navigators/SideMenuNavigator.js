@@ -10,6 +10,8 @@ import LogoutButton from '../../../Components/LogoutButton';
 import FaqView from '../../Pages/FaqView';
 import { AuthContext } from '../../../Contexts/AuthContext';
 import ClosedServicesView from '../../Pages/Production/ClosedServicesView';
+import ConfirmCheckoutView from '../../Pages/Logistics/ConfirmCheckoutView';
+import PendingDeliveriesView from '../../Pages/Logistics/PendingDeliveriesView';
 
 const Drawer = createDrawerNavigator();
 
@@ -74,6 +76,40 @@ export default function SideMenuNavigator() {
                 drawerLabel: 'Últimos Fechamentos',
                 drawerIcon: () => (
                   <Icon name="list" type="material" size={20} />
+                ),
+              }}
+            />
+          </>
+        );
+        break;
+      case 'logistica':
+        setViews(
+          <>
+            <Drawer.Screen
+              name="ConfirmCheckoutView"
+              component={ConfirmCheckoutView}
+              options={{
+                drawerLabel: 'Retirada de Lote',
+                drawerIcon: () => (
+                  <Icon
+                    name="barcode-scan"
+                    type="material-community"
+                    size={20}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="PendingDeliveriesView"
+              component={PendingDeliveriesView}
+              options={{
+                drawerLabel: 'Lotes em Trânsito',
+                drawerIcon: () => (
+                  <Icon
+                    name="truck-delivery"
+                    type="material-community"
+                    size={20}
+                  />
                 ),
               }}
             />

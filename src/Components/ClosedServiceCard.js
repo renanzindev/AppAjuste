@@ -1,9 +1,82 @@
 import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { Badge, Card, Divider, Icon } from 'react-native-elements';
+import { Card, Divider, Icon } from 'react-native-elements';
 import Moment from 'moment';
 
 export default function ClosedServiceCard({ service }) {
+  const styles = StyleSheet.create({
+    serviceTitle: {
+      textAlign: 'left',
+      fontSize: 16,
+      marginBottom: 5,
+      color: '#5d585c',
+    },
+    serviceSubtitle: {
+      fontWeight: 'bold',
+      fontSize: 12,
+      marginBottom: 10,
+      color: '#5d585c',
+    },
+    bold: {
+      fontWeight: 'bold',
+    },
+    lineSpaced: {
+      fontSize: 12,
+      lineHeight: 16,
+      color: '#5d585c',
+    },
+    badge: {
+      height: 22,
+      marginTop: 3,
+      marginLeft: 10,
+      padding: 3,
+      paddingLeft: 10,
+      paddingRight: 10,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignContent: 'center',
+    },
+    badgeIcon: {
+      paddingLeft: 6,
+      paddingRight: 6,
+    },
+    badgeText: {
+      color: 'white',
+      fontSize: 10,
+    },
+    badgeInfo: {
+      backgroundColor: '#00bcd4',
+    },
+    badgeError: {
+      backgroundColor: 'red',
+    },
+    badgeSuccess: {
+      backgroundColor: '#8bc34a',
+    },
+    badgeWarning: {
+      backgroundColor: '#ffca29',
+    },
+    serviceCard: {
+      borderBottomWidth: 22,
+    },
+    cardInfo: {
+      borderColor: '#b2eaf2',
+      borderBottomColor: '#00bcd4',
+    },
+    cardError: {
+      borderColor: '#ffcccc',
+      borderBottomColor: 'red',
+    },
+    cardSuccess: {
+      borderColor: '#dcedc8',
+      borderBottomColor: '#8bc34a',
+    },
+    cardWarning: {
+      borderColor: '#ffefbe',
+      borderBottomColor: '#ffca29',
+    },
+  });
+
   return (
     <Card
       containerStyle={[
@@ -115,75 +188,3 @@ export default function ClosedServiceCard({ service }) {
     </Card>
   );
 }
-const styles = StyleSheet.create({
-  serviceTitle: {
-    textAlign: 'left',
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#5d585c',
-  },
-  serviceSubtitle: {
-    fontWeight: 'bold',
-    fontSize: 12,
-    marginBottom: 10,
-    color: '#5d585c',
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  lineSpaced: {
-    fontSize: 12,
-    lineHeight: 16,
-    color: '#5d585c',
-  },
-  badge: {
-    height: 22,
-    marginTop: 3,
-    marginLeft: 10,
-    padding: 3,
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignContent: 'center',
-  },
-  badgeIcon: {
-    paddingLeft: 6,
-    paddingRight: 6,
-  },
-  badgeText: {
-    color: 'white',
-    fontSize: 10,
-  },
-  badgeInfo: {
-    backgroundColor: '#00bcd4',
-  },
-  badgeError: {
-    backgroundColor: 'red',
-  },
-  badgeSuccess: {
-    backgroundColor: '#8bc34a',
-  },
-  badgeWarning: {
-    backgroundColor: '#ffca29',
-  },
-  serviceCard: {
-    borderBottomWidth: 22,
-  },
-  cardInfo: {
-    borderColor: '#b2eaf2',
-    borderBottomColor: '#00bcd4',
-  },
-  cardError: {
-    borderColor: '#ffcccc',
-    borderBottomColor: 'red',
-  },
-  cardSuccess: {
-    borderColor: '#dcedc8',
-    borderBottomColor: '#8bc34a',
-  },
-  cardWarning: {
-    borderColor: '#ffefbe',
-    borderBottomColor: '#ffca29',
-  },
-});

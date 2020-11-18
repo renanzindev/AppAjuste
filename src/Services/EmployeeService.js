@@ -8,10 +8,21 @@ Utils.defaultModuleIndex().then((result) => {
 });
 
 const EmployeeService = {
+  actives: async () => {
+    try {
+      const result = await Api.get(
+        `${moduleIndex}/funcionario/visualizar/ativos/minimo`
+      );
+
+      return [result.ok, result.data];
+    } catch (error) {
+      return [];
+    }
+  },
   productionWorkers: async () => {
     try {
       const result = await Api.get(
-        `${moduleIndex}/funcionario/visualizar/produtivos/completo`,
+        `${moduleIndex}/funcionario/visualizar/produtivos/completo`
       );
 
       if (result.ok) return result.data;
@@ -24,7 +35,7 @@ const EmployeeService = {
   productionWorkersByStore: async () => {
     try {
       const result = Api.get(
-        `${moduleIndex}/funcionario/visualizar/produtivos/concessionarias`,
+        `${moduleIndex}/funcionario/visualizar/produtivos/concessionarias`
       );
 
       if (result.ok) return result.data;
@@ -37,7 +48,7 @@ const EmployeeService = {
   sellers: async () => {
     try {
       const result = Api.get(
-        `${moduleIndex}/funcionario/visualizar/vendedores`,
+        `${moduleIndex}/funcionario/visualizar/vendedores`
       );
 
       if (result.ok) return result.data;
@@ -50,7 +61,7 @@ const EmployeeService = {
   birthdays: async () => {
     try {
       const result = await Api.get(
-        `${moduleIndex}/funcionario/visualizar/aniversariantes`,
+        `${moduleIndex}/funcionario/visualizar/aniversariantes`
       );
 
       if (result.ok) {

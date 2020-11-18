@@ -7,6 +7,7 @@ import { NavigationStyles } from '../../../Styles/NavigationStyles';
 import MainHeaderLeft from '../../../Components/MainHeaderLeft';
 import MainHeaderRight from '../../../Components/MainHeaderRight';
 import MainHeaderTitle from '../../../Components/MainHeaderTitle';
+import ConfirmDeliveryView from '../../Pages/Logistics/ConfirmDeliveryView';
 
 const MainStack = createStackNavigator();
 
@@ -42,6 +43,13 @@ export function MainNavigator() {
           headerLeft: () => <MainHeaderLeft />,
           headerRight: () => <MainHeaderRight />,
           headerStyle: NavigationStyles.header(module),
+        }}
+      />
+      <MainStack.Screen
+        name="ConfirmDeliveryView"
+        component={ConfirmDeliveryView}
+        options={{
+          headerShown: false,
         }}
       />
     </MainStack.Navigator>
