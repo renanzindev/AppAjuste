@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-export default function EmptyServiceHistory() {
+export default function EmptyHistory() {
   return (
     <View style={styles.container}>
       <View style={styles.containerImage}>

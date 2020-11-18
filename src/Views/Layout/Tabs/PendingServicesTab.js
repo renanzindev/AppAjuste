@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  SafeAreaView,
-} from 'react-native';
+import { View, ScrollView, RefreshControl } from 'react-native';
 import ClosedServiceCard from '../../../Components/ClosedServiceCard';
-import EmptyServiceHistory from '../../../Components/EmptyServiceHistory';
+import EmptyHistory from '../../../Components/EmptyHistory';
 import { OsServiceContext } from '../../../Contexts/OsServiceContext';
 
 export default function PendingServicesTab() {
@@ -29,18 +23,13 @@ export default function PendingServicesTab() {
     >
       {pendingServices.length ? (
         <View>
-          {pendingServices.map((service, i) => (
-            <ClosedServiceCard service={service} key={i} />
+          {pendingServices.map((service) => (
+            <ClosedServiceCard service={service} key={service.id} />
           ))}
         </View>
       ) : (
-        <EmptyServiceHistory />
+        <EmptyHistory />
       )}
     </ScrollView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

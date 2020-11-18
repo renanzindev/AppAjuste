@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { OsServiceContext } from '../../../Contexts/OsServiceContext';
 import ClosedServiceCard from '../../../Components/ClosedServiceCard';
-import EmptyServiceHistory from '../../../Components/EmptyServiceHistory';
+import EmptyHistory from '../../../Components/EmptyHistory';
 
 export default function LastClosedTab() {
   const {
@@ -34,7 +34,7 @@ export default function LastClosedTab() {
           ))}
         </View>
       ) : (
-        <EmptyServiceHistory />
+        <EmptyHistory />
       )}
     </ScrollView>
   );

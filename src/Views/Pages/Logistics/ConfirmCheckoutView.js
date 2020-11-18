@@ -1,0 +1,187 @@
+import React from 'react';
+import { Alert, Keyboard, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Card, Icon, Input, Text } from 'react-native-elements';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import BottomTabNavigator from '../../../Components/BottomTabNavigator';
+import DeliveryPackageService from '../../../Services/DeliveryPackageService';
+import DeliveryPackageInformation from '../../../Components/DeliveryPackageInformation';
+
+export default function ConfirmCheckoutView() {
+  const [deliveryPackageCode, setDeliveryPackageCode] = React.useState('');
+  const [deliveryPackage, setDeliveryPackage] = React.useState(null);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [loadingPackage, setLoadingPackage] = React.useState(false);
+  const [confirmingCheckout, setConfirmingCheckout] = React.useState(false);
+
+  const packageCreated = 1;
+
+  const clearForm = () => {
+    setLoadingPackage(false);
+    setDeliveryPackage(null);
+    setErrorMessage('');
+    setConfirmingCheckout(false);
+  };
+
+  const ConfirmCheckout = async () => {
+    setConfirmingCheckout(true);
+
+    const data = {
+      logistica_expedicao_id: deliveryPackage.id,
+    };
+
+    try {
+      await DeliveryPackageService.confirmCheckout(data);
+      Alert.alert('Sucesso', 'Retirada Registrada com sucesso!');
+      clearForm();
+      setDeliveryPackageCode('');
+    } catch (error) {
+      Alert.alert(
+        'Erro',
+        'Ocorreu um erro duranto o registro, verifique os dados informados e tente novamente!'
+      );
+      setConfirmingCheckout(false);
+    }
+  };
+
+  const searchPackage = async () => {
+    if (deliveryPackageCode.length === 12) {
+      Keyboard.dismiss();
+      clearForm();
+      setLoadingPackage(true);
+
+      const data = {
+        codigo: deliveryPackageCode,
+      };
+
+      const [ok, response] = await DeliveryPackageService.search(data);
+      if (ok) {
+        if (response.logistica_expedicao_status_id === packageCreated) {
+          await setDeliveryPackage(response);
+        } else {
+          switch (response.logistica_expedicao_status_id) {
+            case 3:
+              setErrorMessage('LOTE JÁ EM TRÂNSITO!');
+              break;
+            case 4:
+              setErrorMessage('LOTE JÁ ENTREGUE!');
+              break;
+            case 5:
+              setErrorMessage('LOTE DEVOLVIDO!');
+              break;
+            default:
+              setErrorMessage('STATUS INVÁLIDO!');
+              break;
+          }
+        }
+      } else {
+        setErrorMessage(response);
+      }
+      setLoadingPackage(false);
+    }
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    barcodeContainer: {
+      flexDirection: 'row',
+    },
+    barcodeInputContainer: {
+      width: '80%',
+    },
+    barcodeButtonContainer: {
+      width: '20%',
+    },
+    barcodeButton: {
+      height: 50,
+      backgroundColor: '#00bcd4',
+    },
+    searchPackageButton: {
+      height: 50,
+      backgroundColor: '#00bcd4',
+    },
+    searchPackageButtonDisabled: {
+      backgroundColor: '#ccf1f6',
+    },
+    confirmButton: {
+      marginTop: 10,
+      height: 60,
+      backgroundColor: '#8bc34a',
+    },
+    confirmButtonDisabled: {
+      backgroundColor: '#e7f3da',
+    },
+    textError: {
+      color: 'red',
+      textTransform: 'uppercase',
+    },
+  });
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Card>
+          <View style={styles.barcodeContainer}>
+            <View style={styles.barcodeInputContainer}>
+              <Input
+                placeholder="Código do Lote"
+                autoCapitalize="none"
+                onChangeText={setDeliveryPackageCode}
+                value={deliveryPackageCode}
+                keyboardType="numeric"
+                maxLength={12}
+              />
+            </View>
+            <View style={styles.barcodeButtonContainer}>
+              <Button
+                type="solid"
+                icon={
+                  <Icon
+                    name="barcode-scan"
+                    type="material-community"
+                    color="white"
+                  />
+                }
+                buttonStyle={styles.barcodeButton}
+              />
+            </View>
+          </View>
+          {errorMessage ? (
+            <Text style={styles.textError}>{errorMessage}</Text>
+          ) : null}
+          <Button
+            type="solid"
+            title="CONSULTAR LOTE"
+            color="white"
+            buttonStyle={styles.searchPackageButton}
+            disabled={deliveryPackageCode.length !== 12 || loadingPackage}
+            disabledStyle={styles.searchPackageButtonDisabled}
+            loading={loadingPackage}
+            onPress={searchPackage}
+          />
+        </Card>
+        {deliveryPackage ? (
+          <>
+            <Card>
+              <DeliveryPackageInformation deliveryPackage={deliveryPackage} />
+              <Button
+                type="solid"
+                title="RETIRAR LOTE"
+                color="white"
+                buttonStyle={styles.confirmButton}
+                disabled={
+                  !deliveryPackageCode || !deliveryPackage || confirmingCheckout
+                }
+                disabledStyle={styles.confirmButtonDisabled}
+                loading={confirmingCheckout}
+                onPress={ConfirmCheckout}
+              />
+            </Card>
+          </>
+        ) : null}
+      </ScrollView>
+      <BottomTabNavigator />
+    </SafeAreaView>
+  );
+}
