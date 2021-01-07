@@ -4,7 +4,7 @@ import { Button, Card, Icon, Input, Text } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
-import { Picker } from '@react-native-community/picker';
+import { Picker } from '@react-native-picker/picker';
 import { useRoute } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import OsServiceService from '../../../Services/OsServiceService';
