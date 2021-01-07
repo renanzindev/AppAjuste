@@ -1,4 +1,4 @@
-import { Picker } from '@react-native-community/picker';
+import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Alert, SafeAreaView, StyleSheet, View } from 'react-native';
