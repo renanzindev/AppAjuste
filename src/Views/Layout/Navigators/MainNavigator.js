@@ -12,11 +12,13 @@ import ConfirmDeliveryView from '../../Pages/Logistics/ConfirmDeliveryView';
 const MainStack = createStackNavigator();
 
 export function MainNavigator() {
-  const { module, setSearch, displaySearch, searchInput } = React.useContext(
+  const { module, setSearch, displaySearch, searchInput, onCamera } = React.useContext(
     AuthContext
   );
 
-  const screenOptions = { animationEnabled: false };
+  const screenOptions = {
+    animationEnabled: false
+  };
   const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -41,7 +43,7 @@ export function MainNavigator() {
         options={{
           headerTitle: () => <MainHeaderTitle />,
           headerLeft: () => <MainHeaderLeft />,
-          headerRight: () => <MainHeaderRight />,
+          // headerRight: () => <MainHeaderRight />,
           headerStyle: NavigationStyles.header(module),
         }}
       />

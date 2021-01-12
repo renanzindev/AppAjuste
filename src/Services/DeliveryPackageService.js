@@ -19,6 +19,17 @@ const DeliveryPackageService = {
       return [false, error];
     }
   },
+  lastDeliveries: async () => {
+    try {
+      const result = await Api.get(
+        `${moduleIndex}/logistica-expedicao/ultimas-entregas`
+      );
+
+      return [result.ok, result.data];
+    } catch (error) {
+      return [false, error];
+    }
+  },
   search: async (data) => {
     try {
       const result = await Api.post(

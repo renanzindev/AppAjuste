@@ -12,6 +12,7 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 import ClosedServicesView from '../../Pages/Production/ClosedServicesView';
 import ConfirmCheckoutView from '../../Pages/Logistics/ConfirmCheckoutView';
 import PendingDeliveriesView from '../../Pages/Logistics/PendingDeliveriesView';
+import LastDeliveriesView from '../../Pages/Logistics/LastDeliveriesView';
 
 const Drawer = createDrawerNavigator();
 
@@ -107,6 +108,20 @@ export default function SideMenuNavigator() {
                 drawerIcon: () => (
                   <Icon
                     name="truck-delivery"
+                    type="material-community"
+                    size={20}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="LastDeliveriesView"
+              component={LastDeliveriesView}
+              options={{
+                drawerLabel: 'Últimas Entregas',
+                drawerIcon: () => (
+                  <Icon
+                    name="truck-check"
                     type="material-community"
                     size={20}
                   />
