@@ -5,8 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import DeliveryPackageService from '../../../Services/DeliveryPackageService';
 import DeliveryPackageInformation from '../../../Components/DeliveryPackageInformation';
+import { AuthContext } from '../../../Contexts/AuthContext';
+import { Modal } from 'react-native';
+import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function ConfirmCheckoutView() {
+  const { onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
+  const [barcodeContext, setBarcodeContext] = React.useState(() => (''));
   const [deliveryPackageCode, setDeliveryPackageCode] = React.useState('');
   const [deliveryPackage, setDeliveryPackage] = React.useState(null);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -21,6 +26,11 @@ export default function ConfirmCheckoutView() {
     setErrorMessage('');
     setConfirmingCheckout(false);
   };
+
+  const SearchBarcodePackage = () => {
+    setBarcodeContext('deliveryPackage');
+    setOnCamera(true);
+  }
 
   const ConfirmCheckout = async () => {
     setConfirmingCheckout(true);
@@ -79,6 +89,27 @@ export default function ConfirmCheckoutView() {
       setLoadingPackage(false);
     }
   };
+
+  React.useEffect(() => {
+    const searchBarcode = async () => {
+      if(barcodeContext === 'deliveryPackage') {
+        setBarcodeContext('');
+        const code = JSON.parse(JSON.stringify(barcodeValue));
+        await setDeliveryPackageCode(code);
+        setBarcodeValue('');
+      }
+    };
+
+    searchBarcode();
+  }, [barcodeValue]);
+
+  React.useEffect(() => {
+    const autoSearch = async () => {
+      searchPackage();
+    }
+    autoSearch();
+  }, [deliveryPackageCode]);
+
 
   const styles = StyleSheet.create({
     container: {
@@ -144,6 +175,7 @@ export default function ConfirmCheckoutView() {
                   />
                 }
                 buttonStyle={styles.barcodeButton}
+                onPress={SearchBarcodePackage}
               />
             </View>
           </View>
@@ -182,6 +214,7 @@ export default function ConfirmCheckoutView() {
         ) : null}
       </ScrollView>
       <BottomTabNavigator />
+      <Modal visible={onCamera}><BarcodeScanner/></Modal>
     </SafeAreaView>
   );
 }

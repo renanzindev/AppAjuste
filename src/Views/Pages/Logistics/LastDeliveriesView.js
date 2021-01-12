@@ -1,29 +1,24 @@
-import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  RefreshControl,
-} from 'react-native';
-import { Divider } from 'react-native-elements';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react'
+import { SafeAreaView } from 'react-native';
+import { RefreshControl } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
+import DeliveryPackageCard from '../../../Components/DeliveryPackageCard';
 import EmptyHistory from '../../../Components/EmptyHistory';
 import DeliveryPackageService from '../../../Services/DeliveryPackageService';
-import DeliveryPackageCard from '../../../Components/DeliveryPackageCard';
 
-export default function PendingDeliveriesView() {
-  const [pendingDeliveries, setPendingDeliveries] = React.useState([]);
+export default function LastDeliveriesView() {
+  const [lastDeliveries, setLastDeliveries] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
   const getPageData = async () => {
     setLoading(true);
 
-    const [ok, response] = await DeliveryPackageService.pendingDeliveries();
+    const [ok, response] = await DeliveryPackageService.lastDeliveries();
 
     if (ok) {
-      setPendingDeliveries(response);
+      setLastDeliveries(response);
     }
 
     setLoading(false);
@@ -87,14 +82,13 @@ export default function PendingDeliveriesView() {
           />
         }
       >
-        <Text style={styles.title}>LOTES EM TRÂNSITO</Text>
-        {pendingDeliveries.length ? (
+        <Text style={styles.title}>ÚLTIMOS LOTES ENTREGUES</Text>
+        {lastDeliveries.length ? (
           <View>
-            {pendingDeliveries.map((deliveryPackage) => (
+            {lastDeliveries.map((deliveryPackage) => (
               <DeliveryPackageCard
                 key={deliveryPackage.id}
                 deliveryPackage={deliveryPackage}
-                showButton
               />
             ))}
           </View>

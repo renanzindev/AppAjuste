@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Alert, Keyboard } from 'react-native';
+import { View, StyleSheet, Alert, Keyboard, Modal } from 'react-native';
 import { Button, Card, Icon, Input, Text } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,10 +9,12 @@ import { useRoute } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import OsServiceService from '../../../Services/OsServiceService';
 import { AuthContext } from '../../../Contexts/AuthContext';
+import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function CloseServiceView() {
-  const { getUser } = React.useContext(AuthContext);
+  const { getUser, onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
   const [serviceCode, setServiceCode] = React.useState('');
+  const [barcodeContext, setBarcodeContext] = React.useState(() => (''));
   const [osService, setOsService] = React.useState(null);
   const [productionWorkerId, setProductionWorkerId] = React.useState('');
   const [loadingService, setLoadingService] = React.useState(false);
@@ -63,6 +65,7 @@ export default function CloseServiceView() {
   };
 
   const searchOsService = async () => {
+    console.log(serviceCode.length);
     if (serviceCode.length === 12) {
       Keyboard.dismiss();
       clearForm();
@@ -75,6 +78,7 @@ export default function CloseServiceView() {
       const [ok, response] = await OsServiceService.search(data);
       if (ok) {
         await setOsService(response);
+        setOnCamera(false);
         defineInitialProductionWorker();
       } else {
         setErrorMessageService(response);
@@ -95,7 +99,6 @@ export default function CloseServiceView() {
 
       const [ok, response] = await OsServiceService.searchProduct(data);
       if (ok) {
-        console.log(response);
         let found = false;
         osService.servico.produtos.forEach((product) => {
           if (product.id === response.produto_id && !product.codigo) {
@@ -147,6 +150,36 @@ export default function CloseServiceView() {
     }
   };
 
+  const SearchBarcodeService = () => {
+    setBarcodeContext('service');
+    setOnCamera(true);
+  }
+
+  const SearchBarcodeProduct = () => {
+    setBarcodeContext('product');
+    setOnCamera(true);
+  }
+
+  React.useEffect(() => {
+    const searchBarcode = async () => {
+      if(barcodeContext === 'service') {
+        setBarcodeContext('');
+        const code = JSON.parse(JSON.stringify(barcodeValue));
+        await setServiceCode(code);
+        setBarcodeValue('');
+      }
+
+      if(barcodeContext === 'product') {
+        setBarcodeContext('');
+        const code = JSON.parse(JSON.stringify(barcodeValue));
+        await setProductCode(code);
+        setBarcodeValue('');
+      }
+    };
+
+    searchBarcode();
+  }, [barcodeValue]);
+
   React.useEffect(() => {
     const initialLoad = async () => {
       const loggedUser = await getUser();
@@ -166,6 +199,10 @@ export default function CloseServiceView() {
   React.useEffect(() => {
     searchOsService();
   }, [serviceCode]);
+
+  React.useEffect(() => {
+    searchProduct();
+  }, [productCode]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -193,6 +230,7 @@ export default function CloseServiceView() {
                   />
                 }
                 buttonStyle={styles.barcodeButton}
+                onPress={SearchBarcodeService}
               />
             </View>
           </View>
@@ -353,6 +391,7 @@ export default function CloseServiceView() {
                             />
                           }
                           buttonStyle={styles.barcodeButton}
+                          onPress={SearchBarcodeProduct}
                         />
                       </View>
                     </View>
@@ -403,6 +442,7 @@ export default function CloseServiceView() {
         ) : null}
       </ScrollView>
       <BottomTabNavigator />
+      <Modal visible={onCamera}><BarcodeScanner/></Modal>
     </SafeAreaView>
   );
 }
