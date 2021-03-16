@@ -5,7 +5,7 @@ export const LoginStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#efefef',
+    backgroundColor: '#f9f9f9',
   },
   bodyInner: {
     width: 340,

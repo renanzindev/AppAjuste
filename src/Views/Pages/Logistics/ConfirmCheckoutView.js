@@ -1,17 +1,36 @@
 import React from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Card, Icon, Input, Text } from 'react-native-elements';
+import {
+  Alert,
+  Keyboard,
+  ScrollView,
+  StyleSheet,
+  View,
+  Modal,
+} from 'react-native';
+import {
+  Button,
+  Card,
+  Divider,
+  Icon,
+  Input,
+  Text,
+} from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import DeliveryPackageService from '../../../Services/DeliveryPackageService';
 import DeliveryPackageInformation from '../../../Components/DeliveryPackageInformation';
 import { AuthContext } from '../../../Contexts/AuthContext';
-import { Modal } from 'react-native';
+
 import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function ConfirmCheckoutView() {
-  const { onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
-  const [barcodeContext, setBarcodeContext] = React.useState(() => (''));
+  const {
+    onCamera,
+    setOnCamera,
+    barcodeValue,
+    setBarcodeValue,
+  } = React.useContext(AuthContext);
+  const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [deliveryPackageCode, setDeliveryPackageCode] = React.useState('');
   const [deliveryPackage, setDeliveryPackage] = React.useState(null);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -30,7 +49,7 @@ export default function ConfirmCheckoutView() {
   const SearchBarcodePackage = () => {
     setBarcodeContext('deliveryPackage');
     setOnCamera(true);
-  }
+  };
 
   const ConfirmCheckout = async () => {
     setConfirmingCheckout(true);
@@ -92,7 +111,7 @@ export default function ConfirmCheckoutView() {
 
   React.useEffect(() => {
     const searchBarcode = async () => {
-      if(barcodeContext === 'deliveryPackage') {
+      if (barcodeContext === 'deliveryPackage') {
         setBarcodeContext('');
         const code = JSON.parse(JSON.stringify(barcodeValue));
         await setDeliveryPackageCode(code);
@@ -106,17 +125,22 @@ export default function ConfirmCheckoutView() {
   React.useEffect(() => {
     const autoSearch = async () => {
       searchPackage();
-    }
+    };
     autoSearch();
   }, [deliveryPackageCode]);
-
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
     },
+    containerScroll: {
+      minHeight: '100%',
+      backgroundColor: '#f9f9f9',
+      minWidth: '100%',
+    },
     barcodeContainer: {
       flexDirection: 'row',
+      marginTop: 20,
     },
     barcodeInputContainer: {
       width: '80%',
@@ -147,11 +171,21 @@ export default function ConfirmCheckoutView() {
       color: 'red',
       textTransform: 'uppercase',
     },
+    title: {
+      margin: 10,
+      textAlign: 'center',
+      textTransform: 'uppercase',
+      fontFamily: 'Arial',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
   });
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.containerScroll}>
+        <Text style={styles.title}>RETIRADA DE LOTE</Text>
+        <Divider />
         <Card>
           <View style={styles.barcodeContainer}>
             <View style={styles.barcodeInputContainer}>
@@ -214,7 +248,9 @@ export default function ConfirmCheckoutView() {
         ) : null}
       </ScrollView>
       <BottomTabNavigator />
-      <Modal visible={onCamera}><BarcodeScanner/></Modal>
+      <Modal visible={onCamera}>
+        <BarcodeScanner />
+      </Modal>
     </SafeAreaView>
   );
 }

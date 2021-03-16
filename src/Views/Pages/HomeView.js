@@ -69,6 +69,7 @@ export default function HomeView() {
         ) : null}
       </View>
       <ScrollView
+        contentContainerStyle={styles.containerScroll}
         refreshControl={
           <RefreshControl
             colors={['#8bc34a']}
@@ -116,6 +117,11 @@ export default function HomeView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerScroll: {
+    minHeight: '100%',
+    backgroundColor: '#f9f9f9',
+    minWidth: '100%',
   },
   profileBg: {
     width: '100%',

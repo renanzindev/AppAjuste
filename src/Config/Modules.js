@@ -1,19 +1,5 @@
-export const appModules = [2, 5, 16];
+export const appModules = [5, 16];
 export const appModulesTabs = {
-  estoque: [
-    {
-      icon: 'home',
-      iconType: 'material',
-      title: 'INÍCIO',
-      route: 'HomeView',
-    },
-    {
-      icon: 'barcode-scan',
-      iconType: 'material-community',
-      title: 'ENVIO RAST.',
-      route: 'TrackableShippingView',
-    },
-  ],
   producao: [
     {
       icon: 'home',

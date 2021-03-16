@@ -154,17 +154,31 @@ export default function DeliveryPackageCard({ deliveryPackage, showButton }) {
       {showButton ? (
         <>
           <Divider style={{ marginBottom: 10 }} />
-          <Button
-            type="solid"
-            title="ENTREGAR"
-            color="white"
-            buttonStyle={styles.confirmButton}
-            onPress={() => {
-              navigation.navigate('ConfirmDeliveryView', {
-                deliveryPackage,
-              });
-            }}
-          />
+          {deliveryPackage.status.id < 4 ? (
+            <Button
+              type="solid"
+              title="ENTREGAR"
+              color="white"
+              buttonStyle={styles.confirmButton}
+              onPress={() => {
+                navigation.navigate('ConfirmDeliveryView', {
+                  deliveryPackage,
+                });
+              }}
+            />
+          ) : (
+            <Button
+              type="solid"
+              title="DETALHES"
+              color="white"
+              buttonStyle={styles.confirmButton}
+              onPress={() => {
+                navigation.navigate('ConfirmDeliveryView', {
+                  deliveryPackage,
+                });
+              }}
+            />
+          )}
         </>
       ) : null}
     </Card>

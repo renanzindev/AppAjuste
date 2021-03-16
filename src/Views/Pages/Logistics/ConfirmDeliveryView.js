@@ -44,7 +44,8 @@ export default function ConfirmDeliveryView() {
       await DeliveryPackageService.confirmDelivery(data);
       Alert.alert('Sucesso', 'Entrega Registrada com sucesso!');
       clearForm();
-      navigation.navigate('PendingDeliveriesView');
+      const refreshPendingDeliveries = true;
+      navigation.navigate('PendingDeliveriesView', refreshPendingDeliveries);
     } catch (error) {
       Alert.alert(
         'Erro',
@@ -112,39 +113,45 @@ export default function ConfirmDeliveryView() {
           <>
             <Card>
               <DeliveryPackageInformation deliveryPackage={deliveryPackage} />
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={employeeId}
-                  style={{ height: 50 }}
-                  mode="dropdown"
-                  onValueChange={setEmployeeId}
-                >
-                  {!employeeId ? (
-                    <Picker.Item
-                      key={0}
-                      label="SELECIONE O PRODUTIVO"
-                      value={null}
-                    />
-                  ) : null}
-                  {employees.map((employee) => (
-                    <Picker.Item
-                      key={employee.id}
-                      label={employee.nome}
-                      value={employee.id}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              <Button
-                type="solid"
-                title="CONFIRMAR ENTREGA"
-                color="white"
-                buttonStyle={styles.confirmButton}
-                disabled={!employeeId || !deliveryPackage || confirmingDelivery}
-                disabledStyle={styles.confirmButtonDisabled}
-                loading={confirmingDelivery}
-                onPress={confirmDelivery}
-              />
+              {deliveryPackage.status.id < 4 ? (
+                <>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={employeeId}
+                      style={{ height: 50 }}
+                      mode="dropdown"
+                      onValueChange={setEmployeeId}
+                    >
+                      {!employeeId ? (
+                        <Picker.Item
+                          key={0}
+                          label="SELECIONE O PRODUTIVO"
+                          value={null}
+                        />
+                      ) : null}
+                      {employees.map((employee) => (
+                        <Picker.Item
+                          key={employee.id}
+                          label={employee.nome}
+                          value={employee.id}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
+                  <Button
+                    type="solid"
+                    title="CONFIRMAR ENTREGA"
+                    color="white"
+                    buttonStyle={styles.confirmButton}
+                    disabled={
+                      !employeeId || !deliveryPackage || confirmingDelivery
+                    }
+                    disabledStyle={styles.confirmButtonDisabled}
+                    loading={confirmingDelivery}
+                    onPress={confirmDelivery}
+                  />
+                </>
+              ) : null}
             </Card>
           </>
         ) : null}

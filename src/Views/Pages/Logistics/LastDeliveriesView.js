@@ -1,14 +1,21 @@
-import React from 'react'
-import { SafeAreaView } from 'react-native';
-import { RefreshControl } from 'react-native';
-import { View, StyleSheet, Text } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler';
+import React from 'react';
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  Text,
+  RefreshControl,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useIsFocused } from '@react-navigation/native';
+import { Divider } from 'react-native-elements';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import DeliveryPackageCard from '../../../Components/DeliveryPackageCard';
 import EmptyHistory from '../../../Components/EmptyHistory';
 import DeliveryPackageService from '../../../Services/DeliveryPackageService';
 
 export default function LastDeliveriesView() {
+  const isFocused = useIsFocused();
   const [lastDeliveries, setLastDeliveries] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
@@ -26,7 +33,7 @@ export default function LastDeliveriesView() {
 
   React.useEffect(() => {
     getPageData();
-  }, []);
+  }, [isFocused]);
 
   const GetDataOnRefresh = React.useCallback(() => {
     getPageData();
@@ -40,12 +47,12 @@ export default function LastDeliveriesView() {
     },
     containerScroll: {
       minHeight: '100%',
-      backgroundColor: '#fff',
+      backgroundColor: '#f9f9f9',
       minWidth: '100%',
     },
     title: {
       margin: 10,
-      textAlign:'center',
+      textAlign: 'center',
       textTransform: 'uppercase',
       fontFamily: 'Arial',
       fontSize: 18,
@@ -83,20 +90,26 @@ export default function LastDeliveriesView() {
         }
       >
         <Text style={styles.title}>ÚLTIMOS LOTES ENTREGUES</Text>
-        {lastDeliveries.length ? (
-          <View>
-            {lastDeliveries.map((deliveryPackage) => (
-              <DeliveryPackageCard
-                key={deliveryPackage.id}
-                deliveryPackage={deliveryPackage}
-              />
-            ))}
-          </View>
-        ) : (
-          <View style={styles.emptyImage}>
-            <EmptyHistory />
-          </View>
-        )}
+        <Divider />
+        {!loading ? (
+          <>
+            {lastDeliveries.length ? (
+              <View>
+                {lastDeliveries.map((deliveryPackage) => (
+                  <DeliveryPackageCard
+                    key={deliveryPackage.id}
+                    deliveryPackage={deliveryPackage}
+                    showButton
+                  />
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyImage}>
+                <EmptyHistory />
+              </View>
+            )}
+          </>
+        ) : null}
       </ScrollView>
       <BottomTabNavigator />
     </SafeAreaView>

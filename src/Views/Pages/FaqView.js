@@ -8,7 +8,7 @@ import BottomTabNavigator from '../../Components/BottomTabNavigator';
 export default function FaqView() {
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.containerScroll}>
         <Card>
           <Card.Title style={styles.cardTitle}>
             FAQ - Uso do Aplicativo
@@ -32,6 +32,10 @@ export default function FaqView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerScroll: {
+    minHeight: '100%',
+    backgroundColor: '#f9f9f9',
   },
   cardTitle: {
     alignSelf: 'flex-start',

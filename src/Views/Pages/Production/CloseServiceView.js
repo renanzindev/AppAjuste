@@ -12,9 +12,15 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function CloseServiceView() {
-  const { getUser, onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
+  const {
+    getUser,
+    onCamera,
+    setOnCamera,
+    barcodeValue,
+    setBarcodeValue,
+  } = React.useContext(AuthContext);
   const [serviceCode, setServiceCode] = React.useState('');
-  const [barcodeContext, setBarcodeContext] = React.useState(() => (''));
+  const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [osService, setOsService] = React.useState(null);
   const [productionWorkerId, setProductionWorkerId] = React.useState('');
   const [loadingService, setLoadingService] = React.useState(false);
@@ -65,7 +71,6 @@ export default function CloseServiceView() {
   };
 
   const searchOsService = async () => {
-    console.log(serviceCode.length);
     if (serviceCode.length === 12) {
       Keyboard.dismiss();
       clearForm();
@@ -153,23 +158,23 @@ export default function CloseServiceView() {
   const SearchBarcodeService = () => {
     setBarcodeContext('service');
     setOnCamera(true);
-  }
+  };
 
   const SearchBarcodeProduct = () => {
     setBarcodeContext('product');
     setOnCamera(true);
-  }
+  };
 
   React.useEffect(() => {
     const searchBarcode = async () => {
-      if(barcodeContext === 'service') {
+      if (barcodeContext === 'service') {
         setBarcodeContext('');
         const code = JSON.parse(JSON.stringify(barcodeValue));
         await setServiceCode(code);
         setBarcodeValue('');
       }
 
-      if(barcodeContext === 'product') {
+      if (barcodeContext === 'product') {
         setBarcodeContext('');
         const code = JSON.parse(JSON.stringify(barcodeValue));
         await setProductCode(code);
@@ -206,7 +211,7 @@ export default function CloseServiceView() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.containerScroll}>
         <Card>
           <View style={styles.barcodeContainer}>
             <View style={styles.barcodeInputContainer}>
@@ -442,13 +447,19 @@ export default function CloseServiceView() {
         ) : null}
       </ScrollView>
       <BottomTabNavigator />
-      <Modal visible={onCamera}><BarcodeScanner/></Modal>
+      <Modal visible={onCamera}>
+        <BarcodeScanner />
+      </Modal>
     </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerScroll: {
+    minHeight: '100%',
+    backgroundColor: '#f9f9f9',
   },
   barcodeContainer: {
     flexDirection: 'row',

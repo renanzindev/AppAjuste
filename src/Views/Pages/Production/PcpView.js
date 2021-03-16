@@ -9,12 +9,13 @@ import {
 import { Button, Card, Divider } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import EmptyHistory from '../../../Components/EmptyHistory';
 import PcpService from '../../../Services/PcpService';
 
 export default function PcpView() {
+  const isFocused = useIsFocused();
   const [schedules, setSchedules] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
@@ -33,7 +34,7 @@ export default function PcpView() {
 
   React.useEffect(() => {
     getSchedules();
-  }, []);
+  }, [isFocused]);
 
   const PcpViewOnRefresh = React.useCallback(() => {
     getSchedules();
@@ -41,7 +42,8 @@ export default function PcpView() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.containerScroll}
+      <ScrollView
+        contentContainerStyle={styles.containerScroll}
         refreshControl={
           <RefreshControl
             colors={['#8bc34a']}
@@ -54,42 +56,44 @@ export default function PcpView() {
         {!loading ? (
           <View style={!schedules.length ? styles.contentView : null}>
             <Text style={styles.title}>AGENDAMENTOS PENDENTES</Text>
-              { schedules.length ?
-                schedules.map((schedule, i) => (
-                  <Card key={i}>
-                    <Card.Title style={styles.scheduleTitle}>
-                      {Moment(schedule.data_agendamento).format('DD/MM/YYYY HH:mm')}
-                    </Card.Title>
-                    <Text style={styles.scheduleSubtitle}>
-                      #{schedule.os_concessionaria} {schedule.concessionaria}
-                    </Text>
-                    <Divider style={{ marginBottom: 10 }} />
-                    <Text style={styles.lineSpaced}>
-                      <Text style={styles.bold}>SERVIÇO:</Text> {schedule.servico}
-                    </Text>
-                    <Text style={styles.lineSpaced}>
-                      <Text style={styles.bold}>VEÍCULO:</Text> {schedule.veiculo}
-                    </Text>
-                    <Text style={styles.lineSpaced}>
-                      <Text style={styles.bold}>CHASSI:</Text> {schedule.chassi}
-                    </Text>
-                    <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-                    <Button
-                      type="solid"
-                      title="FECHAR SERVIÇO"
-                      color="white"
-                      buttonStyle={styles.closeServiceButton}
-                      onPress={() => {
-                        navigation.navigate('CloseServiceView', {
-                          pcpServiceCode: schedule.codigo,
-                        });
-                      }}
-                    />
-                  </Card>
-            ))
-            :
-            <EmptyHistory />
-            }
+            {schedules.length ? (
+              schedules.map((schedule, i) => (
+                <Card key={i}>
+                  <Card.Title style={styles.scheduleTitle}>
+                    {Moment(schedule.data_agendamento).format(
+                      'DD/MM/YYYY HH:mm'
+                    )}
+                  </Card.Title>
+                  <Text style={styles.scheduleSubtitle}>
+                    #{schedule.os_concessionaria} {schedule.concessionaria}
+                  </Text>
+                  <Divider style={{ marginBottom: 10 }} />
+                  <Text style={styles.lineSpaced}>
+                    <Text style={styles.bold}>SERVIÇO:</Text> {schedule.servico}
+                  </Text>
+                  <Text style={styles.lineSpaced}>
+                    <Text style={styles.bold}>VEÍCULO:</Text> {schedule.veiculo}
+                  </Text>
+                  <Text style={styles.lineSpaced}>
+                    <Text style={styles.bold}>CHASSI:</Text> {schedule.chassi}
+                  </Text>
+                  <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+                  <Button
+                    type="solid"
+                    title="FECHAR SERVIÇO"
+                    color="white"
+                    buttonStyle={styles.closeServiceButton}
+                    onPress={() => {
+                      navigation.navigate('CloseServiceView', {
+                        pcpServiceCode: schedule.codigo,
+                      });
+                    }}
+                  />
+                </Card>
+              ))
+            ) : (
+              <EmptyHistory />
+            )}
           </View>
         ) : null}
       </ScrollView>
@@ -103,7 +107,7 @@ const styles = StyleSheet.create({
   },
   containerScroll: {
     minHeight: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9',
   },
   scheduleTitle: {
     textAlign: 'left',
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlignVertical:'center',
+    textAlignVertical: 'center',
     minHeight: '100%',
   },
 });

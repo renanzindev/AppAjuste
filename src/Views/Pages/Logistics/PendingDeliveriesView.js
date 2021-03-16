@@ -6,14 +6,16 @@ import {
   Text,
   RefreshControl,
 } from 'react-native';
-import { Divider } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useIsFocused } from '@react-navigation/native';
+import { Divider } from 'react-native-elements';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import EmptyHistory from '../../../Components/EmptyHistory';
 import DeliveryPackageService from '../../../Services/DeliveryPackageService';
 import DeliveryPackageCard from '../../../Components/DeliveryPackageCard';
 
 export default function PendingDeliveriesView() {
+  const isFocused = useIsFocused();
   const [pendingDeliveries, setPendingDeliveries] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
@@ -31,7 +33,7 @@ export default function PendingDeliveriesView() {
 
   React.useEffect(() => {
     getPageData();
-  }, []);
+  }, [isFocused]);
 
   const GetDataOnRefresh = React.useCallback(() => {
     getPageData();
@@ -45,12 +47,12 @@ export default function PendingDeliveriesView() {
     },
     containerScroll: {
       minHeight: '100%',
-      backgroundColor: '#fff',
+      backgroundColor: '#f9f9f9',
       minWidth: '100%',
     },
     title: {
       margin: 10,
-      textAlign:'center',
+      textAlign: 'center',
       textTransform: 'uppercase',
       fontFamily: 'Arial',
       fontSize: 18,
@@ -88,21 +90,26 @@ export default function PendingDeliveriesView() {
         }
       >
         <Text style={styles.title}>LOTES EM TRÂNSITO</Text>
-        {pendingDeliveries.length ? (
-          <View>
-            {pendingDeliveries.map((deliveryPackage) => (
-              <DeliveryPackageCard
-                key={deliveryPackage.id}
-                deliveryPackage={deliveryPackage}
-                showButton
-              />
-            ))}
-          </View>
-        ) : (
-          <View style={styles.emptyImage}>
-            <EmptyHistory />
-          </View>
-        )}
+        <Divider />
+        {!loading ? (
+          <>
+            {pendingDeliveries.length ? (
+              <View>
+                {pendingDeliveries.map((deliveryPackage) => (
+                  <DeliveryPackageCard
+                    key={deliveryPackage.id}
+                    deliveryPackage={deliveryPackage}
+                    showButton
+                  />
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyImage}>
+                <EmptyHistory />
+              </View>
+            )}
+          </>
+        ) : null}
       </ScrollView>
       <BottomTabNavigator />
     </SafeAreaView>

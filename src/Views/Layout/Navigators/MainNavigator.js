@@ -5,19 +5,19 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 import SideMenuNavigator from './SideMenuNavigator';
 import { NavigationStyles } from '../../../Styles/NavigationStyles';
 import MainHeaderLeft from '../../../Components/MainHeaderLeft';
-import MainHeaderRight from '../../../Components/MainHeaderRight';
+// import MainHeaderRight from '../../../Components/MainHeaderRight';
 import MainHeaderTitle from '../../../Components/MainHeaderTitle';
 import ConfirmDeliveryView from '../../Pages/Logistics/ConfirmDeliveryView';
 
 const MainStack = createStackNavigator();
 
 export function MainNavigator() {
-  const { module, setSearch, displaySearch, searchInput, onCamera } = React.useContext(
+  const { module, setSearch, displaySearch, searchInput } = React.useContext(
     AuthContext
   );
 
   const screenOptions = {
-    animationEnabled: false
+    animationEnabled: false,
   };
   const [loaded, setLoaded] = React.useState(false);
 

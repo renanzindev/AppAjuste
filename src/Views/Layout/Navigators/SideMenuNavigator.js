@@ -5,7 +5,6 @@ import { InteractionManager } from 'react-native';
 import HomeView from '../../Pages/HomeView';
 import CloseServiceView from '../../Pages/Production/CloseServiceView';
 import PcpView from '../../Pages/Production/PcpView';
-import TrackableShippingView from '../../Pages/Stock/TrackableShippingView';
 import LogoutButton from '../../../Components/LogoutButton';
 import FaqView from '../../Pages/FaqView';
 import { AuthContext } from '../../../Contexts/AuthContext';
@@ -29,20 +28,6 @@ export default function SideMenuNavigator() {
 
   React.useEffect(() => {
     switch (module.index) {
-      case 'estoque':
-        setViews(
-          <Drawer.Screen
-            name="TrackableShippingView"
-            component={TrackableShippingView}
-            options={{
-              drawerLabel: 'Envio de Rastreáveis',
-              drawerIcon: () => (
-                <Icon name="barcode-scan" type="material-community" size={20} />
-              ),
-            }}
-          />
-        );
-        break;
       case 'producao':
         setViews(
           <>

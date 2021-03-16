@@ -12,9 +12,16 @@ export default function LastClosedTab() {
     GetDataOnRefresh,
   } = React.useContext(OsServiceContext);
 
+  const styles = StyleSheet.create({
+    containerScroll: {
+      minHeight: '100%',
+      backgroundColor: '#f9f9f9',
+    },
+  });
+
   return (
     <ScrollView
-      contentContainerStyle={{ minHeight: '100%' }}
+      contentContainerStyle={styles.containerScroll}
       refreshControl={
         <RefreshControl
           colors={['#8bc34a']}
@@ -24,42 +31,22 @@ export default function LastClosedTab() {
         />
       }
     >
-      {closedServices.length || reprovedServices.length ? (
-        <View>
-          {closedServices.map((service, i) => (
-            <ClosedServiceCard service={service} key={i} />
-          ))}
-          {reprovedServices.map((service, i) => (
-            <ClosedServiceCard service={service} key={i} />
-          ))}
-        </View>
-      ) : (
-        <EmptyHistory />
-      )}
+      {!loading ? (
+        <>
+          {closedServices.length || reprovedServices.length ? (
+            <View>
+              {closedServices.map((service) => (
+                <ClosedServiceCard service={service} key={service.id} />
+              ))}
+              {reprovedServices.map((service) => (
+                <ClosedServiceCard service={service} key={service.id} />
+              ))}
+            </View>
+          ) : (
+            <EmptyHistory />
+          )}
+        </>
+      ) : null}
     </ScrollView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  serviceTitle: {
-    textAlign: 'left',
-    fontSize: 18,
-    marginBottom: 5,
-    color: '#5d585c',
-  },
-  serviceSubtitle: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginBottom: 10,
-    color: '#5d585c',
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  lineSpaced: {
-    lineHeight: 25,
-    color: '#5d585c',
-  },
-});

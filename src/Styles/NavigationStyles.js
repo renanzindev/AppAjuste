@@ -78,7 +78,7 @@ export const NavigationStyles = StyleSheet.create({
     marginRight: 10,
   },
   headerRightView: {
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   menuButtonContainer: {
     width: 50,
