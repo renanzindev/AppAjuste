@@ -40,6 +40,61 @@ export default function PcpView() {
     getSchedules();
   }, []);
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    containerScroll: {
+      minHeight: '100%',
+      backgroundColor: '#f9f9f9',
+    },
+    scheduleTitle: {
+      textAlign: 'left',
+      fontSize: 18,
+      marginBottom: 5,
+      color: '#5d585c',
+    },
+    scheduleSubtitle: {
+      fontWeight: 'bold',
+      fontSize: 14,
+      marginBottom: 10,
+      color: '#5d585c',
+    },
+    bold: {
+      fontWeight: 'bold',
+    },
+    lineSpaced: {
+      lineHeight: 25,
+      color: '#5d585c',
+    },
+    closeServiceButton: {
+      backgroundColor: '#00bcd4',
+    },
+    title: {
+      marginTop: 20,
+      textAlign: 'center',
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#5d585c',
+    },
+    title2: {
+      margin: 10,
+      textAlign: 'center',
+      textTransform: 'uppercase',
+      fontFamily: 'Arial',
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#5d585c',
+    },
+    contentView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlignVertical: 'center',
+      minHeight: '100%',
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -53,12 +108,13 @@ export default function PcpView() {
           />
         }
       >
+        <Text style={styles.title2}>AGENDAMENTOS PENDENTES</Text>
+        <Divider />
         {!loading ? (
           <View style={!schedules.length ? styles.contentView : null}>
-            <Text style={styles.title}>AGENDAMENTOS PENDENTES</Text>
             {schedules.length ? (
-              schedules.map((schedule, i) => (
-                <Card key={i}>
+              schedules.map((schedule) => (
+                <Card key={schedule.id}>
                   <Card.Title style={styles.scheduleTitle}>
                     {Moment(schedule.data_agendamento).format(
                       'DD/MM/YYYY HH:mm'
@@ -101,48 +157,3 @@ export default function PcpView() {
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  containerScroll: {
-    minHeight: '100%',
-    backgroundColor: '#f9f9f9',
-  },
-  scheduleTitle: {
-    textAlign: 'left',
-    fontSize: 18,
-    marginBottom: 5,
-    color: '#5d585c',
-  },
-  scheduleSubtitle: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginBottom: 10,
-    color: '#5d585c',
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  lineSpaced: {
-    lineHeight: 25,
-    color: '#5d585c',
-  },
-  closeServiceButton: {
-    backgroundColor: '#00bcd4',
-  },
-  title: {
-    marginTop: 20,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#5d585c',
-  },
-  contentView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlignVertical: 'center',
-    minHeight: '100%',
-  },
-});
