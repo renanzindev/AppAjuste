@@ -1,4 +1,4 @@
-package com.smartapp2;
+package com.cs_smart;
 
 import com.facebook.react.ReactActivity;
 
