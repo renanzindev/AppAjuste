@@ -3,13 +3,13 @@ import Utils from '../Config/Utils';
 
 let moduleIndex = '';
 
-Utils.defaultModuleIndex().then((result) => {
-  moduleIndex = result;
-});
-
 const OsServiceService = {
   index: async () => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.get(`${moduleIndex}/prefechamento`);
 
       return [result.ok, result.data];
@@ -19,10 +19,15 @@ const OsServiceService = {
   },
   search: async (data) => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.post(
         `${moduleIndex}/prefechamento/consultar/codigo`,
         data
       );
+      console.log(result);
 
       return [result.ok, result.data];
     } catch (error) {
@@ -31,6 +36,10 @@ const OsServiceService = {
   },
   searchProduct: async (data) => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.post(
         `${moduleIndex}/prefechamento/consultar/codigo/produto`,
         data
@@ -43,6 +52,10 @@ const OsServiceService = {
   },
   closeService: async (data) => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.post(`${moduleIndex}/prefechamento/novo`, data);
 
       return result.ok;

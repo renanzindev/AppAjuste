@@ -3,13 +3,13 @@ import Utils from '../Config/Utils';
 
 let moduleIndex = '';
 
-Utils.defaultModuleIndex().then((result) => {
-  moduleIndex = result;
-});
-
 const EmployeeService = {
   actives: async () => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.get(
         `${moduleIndex}/funcionario/visualizar/ativos/minimo`
       );
@@ -21,6 +21,10 @@ const EmployeeService = {
   },
   productionWorkers: async () => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.get(
         `${moduleIndex}/funcionario/visualizar/produtivos/completo`
       );
@@ -34,6 +38,10 @@ const EmployeeService = {
   },
   productionWorkersByStore: async () => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = Api.get(
         `${moduleIndex}/funcionario/visualizar/produtivos/concessionarias`
       );
@@ -47,6 +55,10 @@ const EmployeeService = {
   },
   sellers: async () => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = Api.get(
         `${moduleIndex}/funcionario/visualizar/vendedores`
       );
@@ -60,6 +72,10 @@ const EmployeeService = {
   },
   birthdays: async () => {
     try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
       const result = await Api.get(
         `${moduleIndex}/funcionario/visualizar/aniversariantes`
       );
