@@ -3,14 +3,31 @@ import Utils from '../Config/Utils';
 
 let moduleIndex = '';
 
-const OsServiceService = {
-  index: async () => {
+const DeliveryPackageService = {
+  pendingDeliveries: async () => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
         moduleIndex = result;
       });
 
-      const result = await Api.get(`${moduleIndex}/prefechamento`);
+      const result = await Api.get(
+        `${moduleIndex}/logistica-expedicao/entregas-pendentes`
+      );
+
+      return [result.ok, result.data];
+    } catch (error) {
+      return [false, error];
+    }
+  },
+  lastDeliveries: async () => {
+    try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
+      const result = await Api.get(
+        `${moduleIndex}/logistica-expedicao/ultimas-entregas`
+      );
 
       return [result.ok, result.data];
     } catch (error) {
@@ -24,39 +41,41 @@ const OsServiceService = {
       });
 
       const result = await Api.post(
-        `${moduleIndex}/prefechamento/consultar/codigo`,
+        `${moduleIndex}/logistica-expedicao/consultar-codigo`,
         data
       );
-      console.log(result);
 
       return [result.ok, result.data];
     } catch (error) {
       return [false, error];
     }
   },
-  searchProduct: async (data) => {
+  confirmCheckout: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
         moduleIndex = result;
       });
 
       const result = await Api.post(
-        `${moduleIndex}/prefechamento/consultar/codigo/produto`,
+        `${moduleIndex}/logistica-expedicao/confirmar-saida`,
         data
       );
 
-      return [result.ok, result.data];
+      return result.ok;
     } catch (error) {
-      return [false, error];
+      return error;
     }
   },
-  closeService: async (data) => {
+  confirmDelivery: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
         moduleIndex = result;
       });
 
-      const result = await Api.post(`${moduleIndex}/prefechamento/novo`, data);
+      const result = await Api.post(
+        `${moduleIndex}/logistica-expedicao/confirmar-entrega`,
+        data
+      );
 
       return result.ok;
     } catch (error) {
@@ -65,4 +84,4 @@ const OsServiceService = {
   },
 };
 
-export default OsServiceService;
+export default DeliveryPackageService;

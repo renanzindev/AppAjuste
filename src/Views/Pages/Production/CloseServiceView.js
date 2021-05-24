@@ -1,18 +1,33 @@
 import React from 'react';
-import { View, StyleSheet, Alert, Keyboard } from 'react-native';
-import { Button, Card, Icon, Input, Text } from 'react-native-elements';
+import { View, StyleSheet, Alert, Keyboard, Modal } from 'react-native';
+import {
+  Button,
+  Card,
+  Divider,
+  Icon,
+  Input,
+  Text,
+} from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
-import { Picker } from '@react-native-community/picker';
+import { Picker } from '@react-native-picker/picker';
 import { useRoute } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import OsServiceService from '../../../Services/OsServiceService';
 import { AuthContext } from '../../../Contexts/AuthContext';
+import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function CloseServiceView() {
-  const { getUser } = React.useContext(AuthContext);
+  const {
+    getUser,
+    onCamera,
+    setOnCamera,
+    barcodeValue,
+    setBarcodeValue,
+  } = React.useContext(AuthContext);
   const [serviceCode, setServiceCode] = React.useState('');
+  const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [osService, setOsService] = React.useState(null);
   const [productionWorkerId, setProductionWorkerId] = React.useState('');
   const [loadingService, setLoadingService] = React.useState(false);
@@ -75,6 +90,7 @@ export default function CloseServiceView() {
       const [ok, response] = await OsServiceService.search(data);
       if (ok) {
         await setOsService(response);
+        setOnCamera(false);
         defineInitialProductionWorker();
       } else {
         setErrorMessageService(response);
@@ -95,7 +111,6 @@ export default function CloseServiceView() {
 
       const [ok, response] = await OsServiceService.searchProduct(data);
       if (ok) {
-        console.log(response);
         let found = false;
         osService.servico.produtos.forEach((product) => {
           if (product.id === response.produto_id && !product.codigo) {
@@ -147,6 +162,36 @@ export default function CloseServiceView() {
     }
   };
 
+  const SearchBarcodeService = () => {
+    setBarcodeContext('service');
+    setOnCamera(true);
+  };
+
+  const SearchBarcodeProduct = () => {
+    setBarcodeContext('product');
+    setOnCamera(true);
+  };
+
+  React.useEffect(() => {
+    const searchBarcode = async () => {
+      if (barcodeContext === 'service') {
+        setBarcodeContext('');
+        const code = JSON.parse(JSON.stringify(barcodeValue));
+        await setServiceCode(code);
+        setBarcodeValue('');
+      }
+
+      if (barcodeContext === 'product') {
+        setBarcodeContext('');
+        const code = JSON.parse(JSON.stringify(barcodeValue));
+        await setProductCode(code);
+        setBarcodeValue('');
+      }
+    };
+
+    searchBarcode();
+  }, [barcodeValue]);
+
   React.useEffect(() => {
     const initialLoad = async () => {
       const loggedUser = await getUser();
@@ -167,9 +212,110 @@ export default function CloseServiceView() {
     searchOsService();
   }, [serviceCode]);
 
+  React.useEffect(() => {
+    searchProduct();
+  }, [productCode]);
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    containerScroll: {
+      minHeight: '100%',
+      backgroundColor: '#f9f9f9',
+    },
+    barcodeContainer: {
+      flexDirection: 'row',
+    },
+    barcodeInputContainer: {
+      width: '80%',
+    },
+    barcodeButtonContainer: {
+      width: '20%',
+    },
+    barcodeButton: {
+      height: 50,
+      backgroundColor: '#00bcd4',
+    },
+    searchServiceButton: {
+      height: 50,
+      backgroundColor: '#00bcd4',
+    },
+    searchServiceButtonDisabled: {
+      backgroundColor: '#ccf1f6',
+    },
+    cardTitle: {
+      textAlign: 'left',
+      fontSize: 20,
+    },
+    cardContent: {
+      textAlign: 'left',
+      fontSize: 18,
+    },
+    well: {
+      backgroundColor: '#f5f5f5',
+      marginTop: 0,
+      marginBottom: 30,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: '#e8e8e8',
+    },
+    bold: {
+      fontWeight: 'bold',
+      lineHeight: 25,
+    },
+    label: {
+      fontWeight: 'bold',
+      fontSize: 12,
+      lineHeight: 25,
+      marginTop: 20,
+      marginBottom: 0,
+    },
+    pickerContainer: {
+      width: '100%',
+      height: 50,
+      borderWidth: 1,
+      borderColor: '#CBD5DD',
+      borderRadius: 2,
+      backgroundColor: 'white',
+    },
+    textError: {
+      color: 'red',
+      textTransform: 'uppercase',
+    },
+    textSuccess: {
+      color: '#8bc34a',
+      textTransform: 'uppercase',
+    },
+    textInfo: {
+      color: '#3B799A',
+      textTransform: 'uppercase',
+    },
+    confirmButton: {
+      marginTop: 10,
+      height: 60,
+      backgroundColor: '#8bc34a',
+    },
+    confirmButtonDisabled: {
+      backgroundColor: '#e7f3da',
+    },
+    lineSpaced: {
+      lineHeight: 25,
+    },
+    title: {
+      margin: 10,
+      textAlign: 'center',
+      textTransform: 'uppercase',
+      fontFamily: 'Arial',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.containerScroll}>
+        <Text style={styles.title}>FECHAMENTO DE SERVIÇO</Text>
+        <Divider />
         <Card>
           <View style={styles.barcodeContainer}>
             <View style={styles.barcodeInputContainer}>
@@ -193,6 +339,7 @@ export default function CloseServiceView() {
                   />
                 }
                 buttonStyle={styles.barcodeButton}
+                onPress={SearchBarcodeService}
               />
             </View>
           </View>
@@ -292,9 +439,9 @@ export default function CloseServiceView() {
                         value={null}
                       />
                     ) : null}
-                    {osService.produtivos.map((productionWorker, i) => (
+                    {osService.produtivos.map((productionWorker) => (
                       <Picker.Item
-                        key={i}
+                        key={productionWorker.id}
                         label={productionWorker.nome}
                         value={productionWorker.id}
                       />
@@ -305,9 +452,9 @@ export default function CloseServiceView() {
                   <View>
                     <Text style={styles.label}>PRODUTO(S):</Text>
                     <View style={styles.well}>
-                      {osService.servico.produtos.map((product, i) => (
+                      {osService.servico.produtos.map((product) => (
                         <Text
-                          key={i}
+                          key={product.id}
                           style={
                             product.codigo
                               ? styles.textSuccess
@@ -353,6 +500,7 @@ export default function CloseServiceView() {
                             />
                           }
                           buttonStyle={styles.barcodeButton}
+                          onPress={SearchBarcodeProduct}
                         />
                       </View>
                     </View>
@@ -403,89 +551,9 @@ export default function CloseServiceView() {
         ) : null}
       </ScrollView>
       <BottomTabNavigator />
+      <Modal visible={onCamera}>
+        <BarcodeScanner />
+      </Modal>
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  barcodeContainer: {
-    flexDirection: 'row',
-  },
-  barcodeInputContainer: {
-    width: '80%',
-  },
-  barcodeButtonContainer: {
-    width: '20%',
-  },
-  barcodeButton: {
-    height: 50,
-    backgroundColor: '#00bcd4',
-  },
-  searchServiceButton: {
-    height: 50,
-    backgroundColor: '#00bcd4',
-  },
-  searchServiceButtonDisabled: {
-    backgroundColor: '#ccf1f6',
-  },
-  cardTitle: {
-    textAlign: 'left',
-    fontSize: 20,
-  },
-  cardContent: {
-    textAlign: 'left',
-    fontSize: 18,
-  },
-  well: {
-    backgroundColor: '#f5f5f5',
-    marginTop: 0,
-    marginBottom: 30,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-  },
-  bold: {
-    fontWeight: 'bold',
-    lineHeight: 25,
-  },
-  label: {
-    fontWeight: 'bold',
-    fontSize: 12,
-    lineHeight: 25,
-    marginTop: 20,
-    marginBottom: 0,
-  },
-  pickerContainer: {
-    width: '100%',
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#CBD5DD',
-    borderRadius: 2,
-    backgroundColor: 'white',
-  },
-  textError: {
-    color: 'red',
-    textTransform: 'uppercase',
-  },
-  textSuccess: {
-    color: '#8bc34a',
-    textTransform: 'uppercase',
-  },
-  textInfo: {
-    color: '#3B799A',
-    textTransform: 'uppercase',
-  },
-  confirmButton: {
-    marginTop: 10,
-    height: 60,
-    backgroundColor: '#8bc34a',
-  },
-  confirmButtonDisabled: {
-    backgroundColor: '#e7f3da',
-  },
-  lineSpaced: {
-    lineHeight: 25,
-  },
-});

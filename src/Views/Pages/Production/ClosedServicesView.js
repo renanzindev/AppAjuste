@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, Dimensions, RefreshControl } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Dimensions } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { useIsFocused } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import { OsServiceContext } from '../../../Contexts/OsServiceContext';
 import OsServiceService from '../../../Services/OsServiceService';
@@ -12,6 +11,7 @@ import PendingServicesTab from '../../Layout/Tabs/PendingServicesTab';
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function ClosedServicesView() {
+  const isFocused = useIsFocused();
   const [closedServices, setClosedServices] = React.useState([]);
   const [reprovedServices, setReprovedServices] = React.useState([]);
   const [pendingServices, setPendingServices] = React.useState([]);
@@ -44,7 +44,7 @@ export default function ClosedServicesView() {
 
   React.useEffect(() => {
     getPageData();
-  }, []);
+  }, [isFocused]);
 
   const renderTabBar = (props) => (
     <TabBar
@@ -86,13 +86,3 @@ export default function ClosedServicesView() {
     </OsServiceContext.Provider>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scene: {
-    flex: 1,
-    minHeight: '100%',
-    backgroundColor: 'blue',
-  },
-});

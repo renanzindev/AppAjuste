@@ -5,8 +5,9 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 import SideMenuNavigator from './SideMenuNavigator';
 import { NavigationStyles } from '../../../Styles/NavigationStyles';
 import MainHeaderLeft from '../../../Components/MainHeaderLeft';
-import MainHeaderRight from '../../../Components/MainHeaderRight';
+// import MainHeaderRight from '../../../Components/MainHeaderRight';
 import MainHeaderTitle from '../../../Components/MainHeaderTitle';
+import ConfirmDeliveryView from '../../Pages/Logistics/ConfirmDeliveryView';
 
 const MainStack = createStackNavigator();
 
@@ -15,7 +16,9 @@ export function MainNavigator() {
     AuthContext
   );
 
-  const screenOptions = { animationEnabled: false };
+  const screenOptions = {
+    animationEnabled: false,
+  };
   const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -40,8 +43,15 @@ export function MainNavigator() {
         options={{
           headerTitle: () => <MainHeaderTitle />,
           headerLeft: () => <MainHeaderLeft />,
-          headerRight: () => <MainHeaderRight />,
+          // headerRight: () => <MainHeaderRight />,
           headerStyle: NavigationStyles.header(module),
+        }}
+      />
+      <MainStack.Screen
+        name="ConfirmDeliveryView"
+        component={ConfirmDeliveryView}
+        options={{
+          headerShown: false,
         }}
       />
     </MainStack.Navigator>

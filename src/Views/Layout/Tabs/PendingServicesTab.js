@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  SafeAreaView,
-} from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import ClosedServiceCard from '../../../Components/ClosedServiceCard';
-import EmptyServiceHistory from '../../../Components/EmptyServiceHistory';
+import EmptyHistory from '../../../Components/EmptyHistory';
 import { OsServiceContext } from '../../../Contexts/OsServiceContext';
 
 export default function PendingServicesTab() {
@@ -15,9 +9,16 @@ export default function PendingServicesTab() {
     OsServiceContext
   );
 
+  const styles = StyleSheet.create({
+    containerScroll: {
+      minHeight: '100%',
+      backgroundColor: '#f9f9f9',
+    },
+  });
+
   return (
     <ScrollView
-      contentContainerStyle={{ minHeight: '100%' }}
+      contentContainerStyle={styles.containerScroll}
       refreshControl={
         <RefreshControl
           colors={['#8bc34a']}
@@ -27,20 +28,19 @@ export default function PendingServicesTab() {
         />
       }
     >
-      {pendingServices.length ? (
-        <View>
-          {pendingServices.map((service, i) => (
-            <ClosedServiceCard service={service} key={i} />
-          ))}
-        </View>
-      ) : (
-        <EmptyServiceHistory />
-      )}
+      {!loading ? (
+        <>
+          {pendingServices.length ? (
+            <View>
+              {pendingServices.map((service) => (
+                <ClosedServiceCard service={service} key={service.id} />
+              ))}
+            </View>
+          ) : (
+            <EmptyHistory />
+          )}
+        </>
+      ) : null}
     </ScrollView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

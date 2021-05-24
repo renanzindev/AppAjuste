@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-export default function EmptyServiceHistory() {
+export default function EmptyHistory() {
   return (
     <View style={styles.container}>
       <View style={styles.containerImage}>
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#f9f9f9',
   },
   containerImage: {},
   text: {

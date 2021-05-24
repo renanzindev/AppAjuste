@@ -2,7 +2,8 @@ import { create } from 'apisauce';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Api = create({
-  baseURL: 'https://dev.valorizandoseucarro.com.br/api',
+  // baseURL: 'https://dev.valorizandoseucarro.com.br/api',
+  baseURL: 'https://smart.valorizandoseucarro.com.br/api',
 });
 
 Api.addAsyncRequestTransform((request) => async () => {

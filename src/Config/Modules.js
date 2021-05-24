@@ -1,25 +1,5 @@
-export const appModules = [2, 5, 16];
+export const appModules = [5, 16];
 export const appModulesTabs = {
-  estoque: [
-    {
-      icon: 'home',
-      iconType: 'material',
-      title: 'INÍCIO',
-      route: 'HomeView',
-    },
-    {
-      icon: 'barcode-scan',
-      iconType: 'material-community',
-      title: 'ENVIO RAST.',
-      route: 'TrackableShippingView',
-    },
-    {
-      icon: 'info',
-      iconType: 'material',
-      title: 'FAQ',
-      route: 'FaqView',
-    },
-  ],
   producao: [
     {
       icon: 'home',
@@ -39,12 +19,6 @@ export const appModulesTabs = {
       title: 'FECHAR SERV.',
       route: 'CloseServiceView',
     },
-    {
-      icon: 'info',
-      iconType: 'material',
-      title: 'FAQ',
-      route: 'FaqView',
-    },
   ],
   logistica: [
     {
@@ -54,10 +28,16 @@ export const appModulesTabs = {
       route: 'HomeView',
     },
     {
-      icon: 'info',
-      iconType: 'material',
-      title: 'FAQ',
-      route: 'FaqView',
+      icon: 'barcode-scan',
+      iconType: 'material-community',
+      title: 'RETIRADA LOTE',
+      route: 'ConfirmCheckoutView',
+    },
+    {
+      icon: 'truck-delivery',
+      iconType: 'material-community',
+      title: 'EM TRÂNSITO',
+      route: 'PendingDeliveriesView',
     },
   ],
 };

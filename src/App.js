@@ -17,6 +17,8 @@ export default () => {
   const searchInput = React.createRef();
 
   const [loggedIn, setLoggendIn] = React.useState(false);
+  const [onCamera, setOnCamera] = React.useState(false);
+  const [barcodeValue, setBarcodeValue] = React.useState('');
   const [loaded, setLoaded] = React.useState(false);
   const [displayModules, setDisplayModules] = React.useState(false);
   const [userModules, setUserModules] = React.useState([]);
@@ -81,8 +83,12 @@ export default () => {
       setDisplayModules,
       searchInput,
       userModules,
+      onCamera,
+      setOnCamera,
+      barcodeValue,
+      setBarcodeValue,
     }),
-    [defaultModule, search, displaySearch, displayModules]
+    [defaultModule, search, displaySearch, displayModules, onCamera, barcodeValue]
   );
 
   React.useEffect(() => {
