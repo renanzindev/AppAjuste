@@ -6,7 +6,7 @@ import {
   RefreshControl,
   View,
 } from 'react-native';
-import { Button, Card, Divider } from 'react-native-elements';
+import { Button, Card, Divider, SearchBar } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -16,21 +16,62 @@ import PcpService from '../../../Services/PcpService';
 
 export default function PcpView() {
   const isFocused = useIsFocused();
+  const [pcpSchedules, setPcpSchedules] = React.useState([]);
   const [schedules, setSchedules] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [search, setSearch] = React.useState(null);
 
   const navigation = useNavigation();
 
+  const updateSearch = (searchValue) => {
+    setSearch(searchValue);
+  };
+
+  const filterSchedules = (schedulesList, searchValue) => {
+    const results = schedulesList.filter((schedule) => {
+      const keys = Object.keys(schedule);
+      let founded = false;
+
+      for (let i = 0; i < keys.length; i++) {
+        if (keys[i] !== 'codigo') {
+          const value = schedule[keys[i]].toString().toLowerCase();
+
+          if (value.indexOf(searchValue.toLowerCase()) !== -1) {
+            founded = true;
+          }
+        }
+      }
+
+      return founded;
+    });
+
+    return results;
+  };
+
+  const searchSchedules = () => {
+    let originalSchedules = [...pcpSchedules];
+
+    if (search) {
+      originalSchedules = filterSchedules(originalSchedules, search);
+    }
+
+    setSchedules(originalSchedules);
+  };
+
   const getSchedules = async () => {
-    setSchedules([]);
+    setPcpSchedules([]);
     setLoading(true);
 
     const [ok, response] = await PcpService.index();
 
-    if (ok) setSchedules(response);
+    if (ok) setPcpSchedules(response);
 
     setLoading(false);
   };
+
+  React.useEffect(() => {
+    searchSchedules();
+  }, [pcpSchedules, search]);
 
   React.useEffect(() => {
     getSchedules();
@@ -93,6 +134,21 @@ export default function PcpView() {
       textAlignVertical: 'center',
       minHeight: '100%',
     },
+    searchBarContainer: {
+      width: '100%',
+      borderTopWidth: 0,
+      borderBottomWidth: 0,
+      backgroundColor: '#f9f9f9',
+    },
+    searchBarInputContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: '#d9d9d9',
+      backgroundColor: '#f9f9f9',
+    },
+    searchBarInput: {
+      borderWidth: 0,
+      backgroundColor: '#f9f9f9',
+    },
   });
 
   return (
@@ -112,9 +168,17 @@ export default function PcpView() {
         <Divider />
         {!loading ? (
           <View style={!schedules.length ? styles.contentView : null}>
+            <SearchBar
+              placeholder="Pesquisar agendamento"
+              onChangeText={updateSearch}
+              containerStyle={styles.searchBarContainer}
+              inputContainerStyle={styles.searchBarInputContainer}
+              inputStyle={styles.searchBarInput}
+              value={search}
+            />
             {schedules.length ? (
               schedules.map((schedule) => (
-                <Card key={schedule.id}>
+                <Card key={schedule.codigo}>
                   <Card.Title style={styles.scheduleTitle}>
                     {Moment(schedule.data_agendamento).format(
                       'DD/MM/YYYY HH:mm'
