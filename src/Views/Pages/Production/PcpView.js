@@ -6,7 +6,13 @@ import {
   RefreshControl,
   View,
 } from 'react-native';
-import { Button, Card, Divider, SearchBar } from 'react-native-elements';
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Divider,
+  SearchBar,
+} from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -20,6 +26,9 @@ export default function PcpView() {
   const [schedules, setSchedules] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [search, setSearch] = React.useState(null);
+  const [selectedDate, setSelectedDate] = React.useState(null);
+  const [availableDates, setAvailableDates] = React.useState([]);
+  const [formattedDates, setFormattedDates] = React.useState([]);
 
   const navigation = useNavigation();
 
@@ -27,35 +36,77 @@ export default function PcpView() {
     setSearch(searchValue);
   };
 
-  const filterSchedules = (schedulesList, searchValue) => {
-    const results = schedulesList.filter((schedule) => {
-      const keys = Object.keys(schedule);
-      let founded = false;
+  const filterDate = (scheduleList) => {
+    let results = [...scheduleList];
+    if (availableDates.length && selectedDate !== null) {
+      const date = Moment(availableDates[selectedDate]).format('DD/MM/YYYY');
 
-      for (let i = 0; i < keys.length; i++) {
-        if (keys[i] !== 'codigo') {
-          const value = schedule[keys[i]].toString().toLowerCase();
+      results = scheduleList.filter((schedule) => {
+        const scheduleDate = Moment(schedule.data_agendamento).format(
+          'DD/MM/YYYY'
+        );
 
-          if (value.indexOf(searchValue.toLowerCase()) !== -1) {
-            founded = true;
-          }
-        }
-      }
-
-      return founded;
-    });
+        return date === scheduleDate;
+      });
+    }
 
     return results;
   };
 
-  const searchSchedules = () => {
-    let originalSchedules = [...pcpSchedules];
-
+  const filterSchedules = (scheduleList) => {
+    let results = [...scheduleList];
     if (search) {
-      originalSchedules = filterSchedules(originalSchedules, search);
+      results = scheduleList.filter((schedule) => {
+        const keys = Object.keys(schedule);
+        let founded = false;
+
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i] !== 'codigo') {
+            const value = schedule[keys[i]].toString().toLowerCase();
+
+            if (value.indexOf(search.toLowerCase()) !== -1) {
+              founded = true;
+            }
+          }
+        }
+
+        return founded;
+      });
     }
 
-    setSchedules(originalSchedules);
+    return results;
+  };
+
+  const defineFilteredSchedules = () => {
+    let filteredSchedules = [...pcpSchedules];
+
+    filteredSchedules = filterDate(filteredSchedules);
+    filteredSchedules = filterSchedules(filteredSchedules);
+
+    setSchedules(filteredSchedules);
+  };
+
+  const selectDate = (index) => {
+    if (index === selectedDate) {
+      index = null;
+    }
+
+    setSelectedDate(index);
+  };
+
+  const getAvailableDates = () => {
+    let dates = [];
+    let dates2 = [];
+
+    if (pcpSchedules.length) {
+      dates = [
+        ...new Set(pcpSchedules.map((schedule) => schedule.data_agendamento)),
+      ];
+
+      dates2 = dates.map((date) => Moment(date).format('DD/MM'));
+    }
+    setAvailableDates(dates);
+    setFormattedDates(dates2);
   };
 
   const getSchedules = async () => {
@@ -65,19 +116,27 @@ export default function PcpView() {
     const [ok, response] = await PcpService.index();
 
     if (ok) setPcpSchedules(response);
-
-    setLoading(false);
   };
 
   React.useEffect(() => {
-    searchSchedules();
-  }, [pcpSchedules, search]);
+    getAvailableDates();
+    defineFilteredSchedules();
+    setLoading(false);
+  }, [pcpSchedules]);
 
   React.useEffect(() => {
+    defineFilteredSchedules();
+  }, [search, selectedDate]);
+
+  React.useEffect(() => {
+    setSearch(null);
+    setSelectedDate(null);
     getSchedules();
   }, [isFocused]);
 
   const PcpViewOnRefresh = React.useCallback(() => {
+    setSearch(null);
+    setSelectedDate(null);
     getSchedules();
   }, []);
 
@@ -149,6 +208,18 @@ export default function PcpView() {
       borderWidth: 0,
       backgroundColor: '#f9f9f9',
     },
+    selectedDateButton: {
+      backgroundColor: '#00bcd4',
+    },
+    selectedDateText: {
+      color: '#ffffff',
+    },
+    dateContainer: {
+      height: 50,
+    },
+    dateButtonContainer: {
+      minWidth: 85,
+    },
   });
 
   return (
@@ -168,14 +239,29 @@ export default function PcpView() {
         <Divider />
         {!loading ? (
           <View style={!schedules.length ? styles.contentView : null}>
-            <SearchBar
-              placeholder="Pesquisar agendamento"
-              onChangeText={updateSearch}
-              containerStyle={styles.searchBarContainer}
-              inputContainerStyle={styles.searchBarInputContainer}
-              inputStyle={styles.searchBarInput}
-              value={search}
-            />
+            {pcpSchedules.length ? (
+              <SearchBar
+                placeholder="Pesquisar agendamento"
+                onChangeText={updateSearch}
+                containerStyle={styles.searchBarContainer}
+                inputContainerStyle={styles.searchBarInputContainer}
+                inputStyle={styles.searchBarInput}
+                value={search}
+              />
+            ) : null}
+            {formattedDates.length ? (
+              <ScrollView horizontal>
+                <ButtonGroup
+                  buttons={formattedDates}
+                  onPress={selectDate}
+                  selectedIndex={selectedDate}
+                  buttonContainerStyle={styles.dateButtonContainer}
+                  containerStyle={styles.dateContainer}
+                  selectedButtonStyle={styles.selectedDateButton}
+                  selectedTextStyle={styles.selectedDateText}
+                />
+              </ScrollView>
+            ) : null}
             {schedules.length ? (
               schedules.map((schedule) => (
                 <Card key={schedule.codigo}>
