@@ -39,7 +39,7 @@ export default function PcpView() {
   const filterDate = (scheduleList) => {
     let results = [...scheduleList];
     if (availableDates.length && selectedDate !== null) {
-      const date = Moment(availableDates[selectedDate]).format('DD/MM/YYYY');
+      const date = availableDates[selectedDate];
 
       results = scheduleList.filter((schedule) => {
         const scheduleDate = Moment(schedule.data_agendamento).format(
@@ -100,10 +100,20 @@ export default function PcpView() {
 
     if (pcpSchedules.length) {
       dates = [
-        ...new Set(pcpSchedules.map((schedule) => schedule.data_agendamento)),
+        ...new Set(
+          pcpSchedules.map((schedule) =>
+            Moment(schedule.data_agendamento).format('DD/MM/YYYY')
+          )
+        ),
       ];
 
-      dates2 = dates.map((date) => Moment(date).format('DD/MM'));
+      dates2 = [
+        ...new Set(
+          pcpSchedules.map((schedule) =>
+            Moment(schedule.data_agendamento).format('DD/MM')
+          )
+        ),
+      ];
     }
     setAvailableDates(dates);
     setFormattedDates(dates2);
