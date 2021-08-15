@@ -61,7 +61,7 @@ export default function PcpView() {
         let founded = false;
 
         for (let i = 0; i < keys.length; i++) {
-          if (keys[i] !== 'codigo') {
+          if (keys[i] !== 'codigo' && schedule[keys[i]]) {
             const value = schedule[keys[i]].toString().toLowerCase();
 
             if (value.indexOf(search.toLowerCase()) !== -1) {
