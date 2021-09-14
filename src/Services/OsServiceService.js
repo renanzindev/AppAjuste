@@ -63,6 +63,22 @@ const OsServiceService = {
       return error;
     }
   },
+
+  getClosedByPeriod: async (data) => {
+    try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
+      const result = await Api.post(
+        `${moduleIndex}/prefechamento/fechamentos/periodo`,
+        data
+      );
+      return [result.ok, result.data];
+    } catch (error) {
+      return error;
+    }
+  },
 };
 
 export default OsServiceService;

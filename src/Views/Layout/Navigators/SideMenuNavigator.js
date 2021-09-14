@@ -9,6 +9,7 @@ import LogoutButton from '../../../Components/LogoutButton';
 import FaqView from '../../Pages/FaqView';
 import { AuthContext } from '../../../Contexts/AuthContext';
 import ClosedServicesView from '../../Pages/Production/ClosedServicesView';
+import ClosedServicesPeriodView from '../../Pages/Production/ClosedServicesPeriodView';
 import ConfirmCheckoutView from '../../Pages/Logistics/ConfirmCheckoutView';
 import PendingDeliveriesView from '../../Pages/Logistics/PendingDeliveriesView';
 import LastDeliveriesView from '../../Pages/Logistics/LastDeliveriesView';
@@ -62,6 +63,20 @@ export default function SideMenuNavigator() {
                 drawerLabel: 'Últimos Fechamentos',
                 drawerIcon: () => (
                   <Icon name="list" type="material" size={20} />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="ClosedServicesPeriodView"
+              component={ClosedServicesPeriodView}
+              options={{
+                drawerLabel: 'Fech. Por Período',
+                drawerIcon: () => (
+                  <Icon
+                    name="calendar-check"
+                    type="material-community"
+                    size={20}
+                  />
                 ),
               }}
             />
