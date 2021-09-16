@@ -27,7 +27,6 @@ const OsServiceService = {
         `${moduleIndex}/prefechamento/consultar/codigo`,
         data
       );
-      console.log(result);
 
       return [result.ok, result.data];
     } catch (error) {

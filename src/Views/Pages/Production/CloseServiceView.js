@@ -50,7 +50,7 @@ export default function CloseServiceView() {
         (productionWorker) => productionWorker.id
       );
       if (productionWorkers.includes(user.funcionario.id)) {
-        setProductionWorkerId(user.funcionario.id.toString());
+        setProductionWorkerId(user.funcionario.id);
       }
     }
   };
