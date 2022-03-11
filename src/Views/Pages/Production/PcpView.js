@@ -83,7 +83,9 @@ export default function PcpView() {
     filteredSchedules = filterDate(filteredSchedules);
     filteredSchedules = filterSchedules(filteredSchedules);
 
-    setSchedules(filteredSchedules);
+    setSchedules([
+      ...new Map(filteredSchedules.map((item) => [item.codigo, item])).values(),
+    ]);
   };
 
   const selectDate = (index) => {

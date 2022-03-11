@@ -42,9 +42,16 @@ export default class Auth {
 
         return true;
       }
+
+      if (response.problem === 'NETWORK_ERROR') {
+        return 'Não foi possível se comunicar com o servidor, verifique sua conexão e tente novamente!';
+      }
+
       return response.data.error;
     } catch (error) {
-      return error;
+      await this.logOut();
+
+      return 'Ocorreu um erro inesperado, entre em contato com o suporte!';
     }
   };
 

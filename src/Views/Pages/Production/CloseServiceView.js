@@ -43,14 +43,15 @@ export default function CloseServiceView() {
   const route = useRoute();
   const filmSubgroups = [1, 5];
 
-  const defineInitialProductionWorker = () => {
-    setProductionWorkerId('');
+  const defineInitialProductionWorker = async () => {
+    await setProductionWorkerId('');
+
     if (osService && user) {
       const productionWorkers = osService.produtivos.map(
         (productionWorker) => productionWorker.id
       );
       if (productionWorkers.includes(user.funcionario.id)) {
-        setProductionWorkerId(user.funcionario.id);
+        await setProductionWorkerId(user.funcionario.id);
       }
     }
   };
@@ -90,10 +91,10 @@ export default function CloseServiceView() {
       const [ok, response] = await OsServiceService.search(data);
       if (ok) {
         await setOsService(response);
-        setOnCamera(false);
-        defineInitialProductionWorker();
+        await setOnCamera(false);
+        await defineInitialProductionWorker();
       } else {
-        setErrorMessageService(response);
+        await setErrorMessageService(response);
       }
       setLoadingService(false);
     }
@@ -196,7 +197,7 @@ export default function CloseServiceView() {
     const initialLoad = async () => {
       const loggedUser = await getUser();
       await setUser(loggedUser);
-      defineInitialProductionWorker();
+      await defineInitialProductionWorker();
     };
     initialLoad();
   }, [osService]);
