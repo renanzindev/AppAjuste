@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Utils = {
-  defaultModuleIndex: async () => {
+  defaultModuleIndex: async (v3 = false) => {
     try {
       const result = await AsyncStorage.getItem('@smartApp:module');
       const module = JSON.parse(result);
 
-      return `/${module.index}`;
+      return v3 ? `/v3/${module.index_v3}` : `/${module.index}`;
     } catch (error) {
       return '';
     }

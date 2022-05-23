@@ -20,6 +20,7 @@ export default class Auth {
           id: userModule.id,
           name: userModule.nome,
           index: userModule.index,
+          index_v3: userModule.index_v3,
           tabs: appModulesTabs[userModule.index],
           default: !!userModule.pivot.padrao,
         }));

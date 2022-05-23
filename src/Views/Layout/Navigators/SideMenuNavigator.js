@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Icon } from 'react-native-elements';
 import { InteractionManager } from 'react-native';
 import HomeView from '../../Pages/HomeView';
+import PayStubView from '../../Pages/PayStubView';
 import CloseServiceView from '../../Pages/Production/CloseServiceView';
 import PcpView from '../../Pages/Production/PcpView';
 import LogoutButton from '../../../Components/LogoutButton';
@@ -149,6 +150,14 @@ export default function SideMenuNavigator() {
         options={{
           drawerLabel: 'INÍCIO',
           drawerIcon: () => <Icon name="home" size={20} />,
+        }}
+      />
+      <Drawer.Screen
+        name="PayStubView"
+        component={PayStubView}
+        options={{
+          drawerLabel: 'Holerite',
+          drawerIcon: () => <Icon name="money" type="material" size={20} />,
         }}
       />
       {views}

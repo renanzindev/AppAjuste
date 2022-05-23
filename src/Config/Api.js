@@ -1,10 +1,11 @@
 import { create } from 'apisauce';
 import AsyncStorage from '@react-native-community/async-storage';
+import DownloadFile from './DownloadManager';
 
-const Api = create({
-  // baseURL: 'https://dev.valorizandoseucarro.com.br/api',
-  baseURL: 'https://smart.valorizandoseucarro.com.br/api',
-});
+const baseURL = 'https://dev.valorizandoseucarro.com.br/api';
+// const baseURL = 'https://smart.valorizandoseucarro.com.br/api';
+
+const Api = create({ baseURL });
 
 Api.addAsyncRequestTransform((request) => async () => {
   try {
@@ -12,7 +13,15 @@ Api.addAsyncRequestTransform((request) => async () => {
     if (token) {
       request.headers.Authorization = `Bearer ${token}`;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 });
+
+Api.download = async (type, url, props) => {
+  url = `${baseURL}${url}`;
+
+  DownloadFile(type, url, props.filename, props.mime);
+};
 
 export default Api;
