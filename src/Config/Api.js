@@ -2,8 +2,8 @@ import { create } from 'apisauce';
 import AsyncStorage from '@react-native-community/async-storage';
 import DownloadFile from './DownloadManager';
 
-const baseURL = 'https://dev.valorizandoseucarro.com.br/api';
-// const baseURL = 'https://smart.valorizandoseucarro.com.br/api';
+// const baseURL = 'https://dev.valorizandoseucarro.com.br/api';
+const baseURL = 'https://smart.valorizandoseucarro.com.br/api';
 
 const Api = create({ baseURL });
 
