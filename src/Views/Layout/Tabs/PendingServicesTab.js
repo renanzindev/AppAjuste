@@ -5,9 +5,8 @@ import EmptyHistory from '../../../Components/EmptyHistory';
 import { OsServiceContext } from '../../../Contexts/OsServiceContext';
 
 export default function PendingServicesTab() {
-  const { pendingServices, loading, GetDataOnRefresh } = React.useContext(
-    OsServiceContext
-  );
+  const { pendingServices, loading, GetDataOnRefresh } =
+    React.useContext(OsServiceContext);
 
   const styles = StyleSheet.create({
     containerScroll: {
