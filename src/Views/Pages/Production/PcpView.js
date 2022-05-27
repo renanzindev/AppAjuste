@@ -172,6 +172,12 @@ export default function PcpView() {
       marginBottom: 10,
       color: '#5d585c',
     },
+    scheduleSubtitleReturn: {
+      fontWeight: 'bold',
+      fontSize: 14,
+      marginBottom: 10,
+      color: '#3b799a',
+    },
     bold: {
       fontWeight: 'bold',
     },
@@ -232,6 +238,25 @@ export default function PcpView() {
     dateButtonContainer: {
       minWidth: 85,
     },
+    badge: {
+      height: 22,
+      marginLeft: 10,
+      fontSize: 18,
+      padding: 3,
+      paddingLeft: 10,
+      paddingRight: 10,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignContent: 'center',
+    },
+    badgeText: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 10,
+    },
+    badgeInfo: {
+      backgroundColor: '#335397',
+    },
   });
 
   return (
@@ -281,6 +306,12 @@ export default function PcpView() {
                     {Moment(schedule.data_agendamento).format(
                       'DD/MM/YYYY HH:mm'
                     )}
+                    {`  `}
+                    {schedule.tipo_id === 6 ? (
+                      <View style={[styles.badge, styles.badgeInfo]}>
+                        <Text style={styles.badgeText}>RETORNO</Text>
+                      </View>
+                    ) : null}
                   </Card.Title>
                   <Text style={styles.scheduleSubtitle}>
                     #{schedule.os_concessionaria} {schedule.concessionaria}

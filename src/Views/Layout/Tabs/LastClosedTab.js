@@ -5,12 +5,8 @@ import ClosedServiceCard from '../../../Components/ClosedServiceCard';
 import EmptyHistory from '../../../Components/EmptyHistory';
 
 export default function LastClosedTab() {
-  const {
-    closedServices,
-    reprovedServices,
-    loading,
-    GetDataOnRefresh,
-  } = React.useContext(OsServiceContext);
+  const { closedServices, reprovedServices, loading, GetDataOnRefresh } =
+    React.useContext(OsServiceContext);
 
   const styles = StyleSheet.create({
     containerScroll: {

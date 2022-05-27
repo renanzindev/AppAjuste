@@ -47,6 +47,9 @@ export default function ClosedServiceCard({ service }) {
     badgeInfo: {
       backgroundColor: '#00bcd4',
     },
+    badgeInfoReturn: {
+      backgroundColor: '#335397',
+    },
     badgeError: {
       backgroundColor: 'red',
     },
@@ -98,6 +101,11 @@ export default function ClosedServiceCard({ service }) {
           <View style={[styles.badge, styles.badgeInfo]}>
             <Text style={styles.badgeText}>PCP</Text>
           </View>
+          {service.os.os_tipo_id === 6 ? (
+            <View style={[styles.badge, styles.badgeInfoReturn]}>
+              <Text style={styles.badgeText}>RETORNO</Text>
+            </View>
+          ) : null}
           {service.finalizado && !service.cancelado ? (
             <View style={[styles.badge, styles.badgeIcon, styles.badgeSuccess]}>
               <Icon color="white" size={10} name="done" />
