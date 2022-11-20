@@ -20,6 +20,9 @@ export default function PayStubView() {
   const [monthYear, setMonthYear] = React.useState(
     `${currentDate.getFullYear()}/${currentDate.getMonth()}`
   );
+  const [typeOfPaystub, setTypeOfPaystub] = React.useState([{}]);
+  const [type, setType] = React.useState(0);
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -75,7 +78,7 @@ export default function PayStubView() {
   const downloadFilePdf = async () => {
     const [year, month] = await monthYear.split('/');
     setLoading(true);
-    await PayStubService.getPDF(year, month);
+    await PayStubService.getPDF(year, month, type);
     setTimeout(() => {
       setLoading(false);
     }, 3000);
@@ -88,15 +91,21 @@ export default function PayStubView() {
 
   const getPeriods = async () => {
     setLoading(true);
-    const [ok, res] = await PayStubService.index(monthYear);
+    const [ok, res] = await PayStubService.index(monthYear, type);
     if (res.payStub) {
       setHasHolerite(true);
       setValues([
         {
-          total: `R$ ${res.payStub.total_vencimentos}`,
-          desconto: `R$ ${res.payStub.total_descontos}`,
+          total: `R$ ${
+            res.payStub.total_vencimentos ? res.payStub.total_vencimentos : 0.0
+          }`,
+          desconto: `R$ ${
+            res.payStub.total_descontos ? res.payStub.total_descontos : 0.0
+          }`,
           liquido: `R$ ${roundDecimal(
-            res.payStub.total_vencimentos - res.payStub.total_descontos
+            res.payStub.total_vencimentos
+              ? res.payStub.total_vencimentos - res.payStub.total_descontos
+              : 0.0
           )}`,
         },
       ]);
@@ -119,16 +128,24 @@ export default function PayStubView() {
           })
         : []
     );
+
     setLoading(false);
   };
 
   const getMonthYearSelected = async (value) => {
     setMonthYear(value);
   };
+  const getTypeOfPaystub = async (value) => {
+    setType(value);
+  };
 
   React.useEffect(() => {
     getPeriods();
-  }, [monthYear]);
+    setTypeOfPaystub([
+      { key: 0, value: 'Folha Mensal' },
+      { key: 1, value: '13 Salario' },
+    ]);
+  }, [monthYear, type]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -155,7 +172,25 @@ export default function PayStubView() {
               ))}
             </Picker>
           </View>
+          <Divider width={5} />
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={type}
+              style={{ height: 50 }}
+              mode="dropdown"
+              onValueChange={getTypeOfPaystub}
+            >
+              {typeOfPaystub.map((item) => (
+                <Picker.Item
+                  key={item.key}
+                  label={item.value}
+                  value={item.key}
+                />
+              ))}
+            </Picker>
+          </View>
         </Card>
+
         <Card>
           <View>
             <Text style={styles.subTitle}>Total Vencimento</Text>

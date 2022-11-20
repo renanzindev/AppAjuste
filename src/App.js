@@ -88,7 +88,14 @@ export default () => {
       barcodeValue,
       setBarcodeValue,
     }),
-    [defaultModule, search, displaySearch, displayModules, onCamera, barcodeValue]
+    [
+      defaultModule,
+      search,
+      displaySearch,
+      displayModules,
+      onCamera,
+      barcodeValue,
+    ]
   );
 
   React.useEffect(() => {
