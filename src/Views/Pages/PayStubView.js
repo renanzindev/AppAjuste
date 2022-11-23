@@ -20,7 +20,10 @@ export default function PayStubView() {
   const [monthYear, setMonthYear] = React.useState(
     `${currentDate.getFullYear()}/${currentDate.getMonth()}`
   );
-  const [typeOfPaystub, setTypeOfPaystub] = React.useState([{}]);
+  const [typeOfPaystub, setTypeOfPaystub] = React.useState([
+    { key: 0, value: 'Folha Mensal' },
+    { key: 1, value: '13 Salario' },
+  ]);
   const [type, setType] = React.useState(0);
 
   const styles = StyleSheet.create({
@@ -141,10 +144,6 @@ export default function PayStubView() {
 
   React.useEffect(() => {
     getPeriods();
-    setTypeOfPaystub([
-      { key: 0, value: 'Folha Mensal' },
-      { key: 1, value: '13 Salario' },
-    ]);
   }, [monthYear, type]);
 
   return (
