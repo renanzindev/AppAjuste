@@ -19,6 +19,7 @@ const DeliveryPackageService = {
       return [false, error];
     }
   },
+
   lastDeliveries: async () => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
@@ -34,6 +35,7 @@ const DeliveryPackageService = {
       return [false, error];
     }
   },
+
   search: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
@@ -50,6 +52,7 @@ const DeliveryPackageService = {
       return [false, error];
     }
   },
+
   confirmCheckout: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
@@ -66,6 +69,7 @@ const DeliveryPackageService = {
       return error;
     }
   },
+
   confirmDelivery: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {

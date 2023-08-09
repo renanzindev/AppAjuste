@@ -17,6 +17,7 @@ const OsServiceService = {
       return [false, error];
     }
   },
+
   search: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
@@ -33,6 +34,7 @@ const OsServiceService = {
       return [false, error];
     }
   },
+
   searchProduct: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
@@ -49,6 +51,7 @@ const OsServiceService = {
       return [false, error];
     }
   },
+
   closeService: async (data) => {
     try {
       await Utils.defaultModuleIndex().then((result) => {
