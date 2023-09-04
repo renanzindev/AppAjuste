@@ -13,13 +13,10 @@ export default function PayStubView() {
   const [loading, setLoading] = React.useState(false);
   const [hasHolerite, setHasHolerite] = React.useState(false);
   const [periods, setPeriods] = React.useState([]);
-
   const [values, setValues] = React.useState([
     { total: 'R$ *******', desconto: 'R$ *******', liquido: 'R$ *******' },
   ]);
-  const [monthYear, setMonthYear] = React.useState(
-    `${currentDate.getFullYear()}/${currentDate.getMonth()}`
-  );
+  const [monthYear, setMonthYear] = React.useState('');
   const [typeOfPaystub, setTypeOfPaystub] = React.useState([
     { key: 0, value: 'Folha Mensal' },
     { key: 1, value: '13 Salario' },
@@ -79,7 +76,7 @@ export default function PayStubView() {
 
   /* Methods */
   const downloadFilePdf = async () => {
-    const [year, month] = await monthYear.split('/');
+    const [year, month] = monthYear.split('/');
     setLoading(true);
     await PayStubService.getPDF(year, month, type);
     setTimeout(() => {
@@ -94,45 +91,7 @@ export default function PayStubView() {
 
   const getPeriods = async () => {
     setLoading(true);
-    const [ok, res] = await PayStubService.index(monthYear, type);
-    if (res.payStub) {
-      setHasHolerite(true);
-      setValues([
-        {
-          total: `R$ ${
-            res.payStub.total_vencimentos ? res.payStub.total_vencimentos : 0.0
-          }`,
-          desconto: `R$ ${
-            res.payStub.total_descontos ? res.payStub.total_descontos : 0.0
-          }`,
-          liquido: `R$ ${roundDecimal(
-            res.payStub.total_vencimentos
-              ? res.payStub.total_vencimentos - res.payStub.total_descontos
-              : 0.0
-          )}`,
-        },
-      ]);
-    } else {
-      setHasHolerite(false);
-      setValues([
-        {
-          total: 'R$ *******',
-          desconto: 'R$ *******',
-          liquido: 'R$ *******',
-        },
-      ]);
-    }
-    setPeriods(
-      ok
-        ? res.periods.map((value, key) => {
-            value =
-              value !== null ? value.substring(0, 7).replace('-', '/') : null;
-            return { key, value };
-          })
-        : []
-    );
-
-    setLoading(false);
+    return [ok, res] = await PayStubService.index(monthYear, type);
   };
 
   const getMonthYearSelected = async (value) => {
@@ -143,7 +102,51 @@ export default function PayStubView() {
   };
 
   React.useEffect(() => {
-    getPeriods();
+    if(!monthYear) {
+      setMonthYear( `${currentDate.getFullYear()}/${currentDate.getMonth()}`);
+    }
+    
+    getPeriods().then((resolve) => {
+      if (resolve[0] && Object.keys(resolve[1].payStub).length) {
+        setHasHolerite(true);
+        setValues([
+          {
+            total: `R$ ${
+              resolve[1].payStub.total_vencimentos ? resolve[1].payStub.total_vencimentos : 0.0
+            }`,
+            desconto: `R$ ${
+              resolve[1].payStub.total_descontos ? resolve[1].payStub.total_descontos : 0.0
+            }`,
+            liquido: `R$ ${roundDecimal(
+              resolve[1].payStub.total_vencimentos
+                ? resolve[1].payStub.total_vencimentos - resolve[1].payStub.total_descontos
+                : 0.0
+            )}`,
+          },
+        ]);
+      } else {
+        setHasHolerite(false);
+        setValues([
+          {
+            total: 'R$ *******',
+            desconto: 'R$ *******',
+            liquido: 'R$ *******',
+          },
+        ]);
+      }
+      setPeriods(
+        resolve[0]
+          ? resolve[1].periods.map((value, key) => {
+              value =
+                value !== null ? value.substring(0, 7).replace('-', '/') : null;
+              return { key, value };
+            })
+          : []
+      );
+      setLoading(false);
+    }).catch((error) => {
+      console.log(error);
+    });
   }, [monthYear, type]);
 
   return (

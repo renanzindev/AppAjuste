@@ -3,9 +3,15 @@
 # - install Buck
 # - `npm start` - to start the packager
 # - `cd android`
+#   
+#   DEBUG
 # - `keytool -genkey -v -keystore keystores/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"`
 # - `./gradlew :app:copyDownloadableDepsToLibs` - make all Gradle compile dependencies available to Buck
 # - `buck install -r android/app` - compile, install and run application
+#
+# RELEASE
+# - `keytool -genkey -v -keystore app/smart_app.keystore -storepass cs481880 -alias smart_app_key -keypass cs481880 -dname "CN=Android Release,O=Android,C=US"`
+# - `./gradlew :app:copyDownloadableDepsToLibs` - make all Gradle compile dependencies available to Buck
 #
 
 load(":build_defs.bzl", "create_aar_targets", "create_jar_targets")
