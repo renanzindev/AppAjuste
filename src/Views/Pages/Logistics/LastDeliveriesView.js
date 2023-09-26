@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
-import { Divider } from 'react-native-elements';
+import { Divider } from '@rneui/themed';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import DeliveryPackageCard from '../../../Components/DeliveryPackageCard';
 import EmptyHistory from '../../../Components/EmptyHistory';

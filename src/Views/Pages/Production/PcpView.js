@@ -12,7 +12,7 @@ import {
   Card,
   Divider,
   SearchBar,
-} from 'react-native-elements';
+} from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -278,7 +278,7 @@ export default function PcpView() {
           <View style={!schedules.length ? styles.contentView : null}>
             {pcpSchedules.length ? (
               <SearchBar
-                placeholder="Pesquisar agendamento"
+                placeholder="Pesquisar Agendamento"
                 onChangeText={updateSearch}
                 containerStyle={styles.searchBarContainer}
                 inputContainerStyle={styles.searchBarInputContainer}

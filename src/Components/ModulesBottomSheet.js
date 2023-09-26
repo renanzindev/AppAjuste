@@ -1,5 +1,5 @@
 import React from 'react';
-import { BottomSheet, Divider, ListItem } from 'react-native-elements';
+import { BottomSheet, Divider, ListItem } from '@rneui/themed';
 import { AuthContext } from '../Contexts/AuthContext';
 
 export default function ModulesBottomSheet() {

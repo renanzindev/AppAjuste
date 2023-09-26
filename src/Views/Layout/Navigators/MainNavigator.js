@@ -1,9 +1,9 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import { InteractionManager } from 'react-native';
-import { AuthContext } from '../../../Contexts/AuthContext';
+import {InteractionManager} from 'react-native';
+import {AuthContext} from '../../../Contexts/AuthContext';
 import SideMenuNavigator from './SideMenuNavigator';
-import { NavigationStyles } from '../../../Styles/NavigationStyles';
+import {NavigationStyles} from '../../../Styles/NavigationStyles';
 import MainHeaderLeft from '../../../Components/MainHeaderLeft';
 // import MainHeaderRight from '../../../Components/MainHeaderRight';
 import MainHeaderTitle from '../../../Components/MainHeaderTitle';
@@ -12,9 +12,8 @@ import ConfirmDeliveryView from '../../Pages/Logistics/ConfirmDeliveryView';
 const MainStack = createStackNavigator();
 
 export function MainNavigator() {
-  const { module, setSearch, displaySearch, searchInput } = React.useContext(
-    AuthContext
-  );
+  const {module, setSearch, displaySearch, searchInput} =
+    React.useContext(AuthContext);
 
   const screenOptions = {
     animationEnabled: false,
@@ -33,7 +32,7 @@ export function MainNavigator() {
     } else {
       setSearch('');
     }
-  }, [displaySearch]);
+  }, [displaySearch, searchInput, setSearch]);
 
   return loaded ? (
     <MainStack.Navigator screenOptions={screenOptions}>

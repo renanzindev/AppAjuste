@@ -2,7 +2,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Alert, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Button, Card, Input } from 'react-native-elements';
+import { Button, Card, Input } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import DeliveryPackageInformation from '../../../Components/DeliveryPackageInformation';

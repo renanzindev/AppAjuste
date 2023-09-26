@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input } from 'react-native-elements';
+import { Button, Input } from '@rneui/themed';
 import { AuthContext } from '../Contexts/AuthContext';
 import { NavigationStyles } from '../Styles/NavigationStyles';
 

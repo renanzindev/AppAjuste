@@ -14,7 +14,7 @@ import {
   Icon,
   Input,
   Text,
-} from 'react-native-elements';
+} from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import DeliveryPackageService from '../../../Services/DeliveryPackageService';
@@ -24,12 +24,7 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function ConfirmCheckoutView() {
-  const {
-    onCamera,
-    setOnCamera,
-    barcodeValue,
-    setBarcodeValue,
-  } = React.useContext(AuthContext);
+  const { onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
   const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [deliveryPackageCode, setDeliveryPackageCode] = React.useState('');
   const [deliveryPackage, setDeliveryPackage] = React.useState(null);

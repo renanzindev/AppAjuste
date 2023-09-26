@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -70,7 +71,7 @@ export default () => {
 
         return user;
       },
-      changeModule: async (module) => {
+      changeModule: async module => {
         authService.changeModule(module);
         getDefaultModule();
       },
@@ -95,7 +96,7 @@ export default () => {
       displayModules,
       onCamera,
       barcodeValue,
-    ]
+    ],
   );
 
   React.useEffect(() => {
@@ -115,8 +116,7 @@ export default () => {
       <NavigationContainer theme={NavigationTheme}>
         {loaded ? (
           <RootStack.Navigator
-            screenOptions={{ headerShown: false, animationEnabled: false }}
-          >
+            screenOptions={{headerShown: false, animationEnabled: false}}>
             {loggedIn ? (
               <RootStack.Screen
                 name="MainNavigator"

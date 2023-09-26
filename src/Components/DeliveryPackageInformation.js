@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Card, ListItem } from 'react-native-elements';
+import { Card, ListItem } from '@rneui/themed';
 import Moment from 'moment';
 
 export default function DeliveryPackageInformation({ deliveryPackage }) {

@@ -1,13 +1,13 @@
-import { create } from 'apisauce';
-import AsyncStorage from '@react-native-community/async-storage';
+import {create} from 'apisauce';
 import DownloadFile from './DownloadManager';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const baseURL = 'https://dev.valorizandoseucarro.com.br/api';
 const baseURL = 'https://smart.valorizandoseucarro.com.br/api';
 
-const Api = create({ baseURL });
+const Api = create({baseURL});
 
-Api.addAsyncRequestTransform((request) => async () => {
+Api.addAsyncRequestTransform(request => async () => {
   try {
     const token = await AsyncStorage.getItem('@smartApp:token');
     if (token) {

@@ -1,22 +1,22 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Api from '../Config/Api';
-import { appModules, appModulesTabs } from '../Config/Modules';
+import {appModules, appModulesTabs} from '../Config/Modules';
 
 export default class Auth {
-  signIn = async (credentials) => {
+  signIn = async credentials => {
     try {
       credentials.app_token = true;
       const response = await Api.post('/auth', credentials);
 
       if (response.ok) {
-        const { token } = response.data;
+        const {token} = response.data;
         const user = response.data.usuario;
 
         user.modules = response.data.usuario.grupo_usuario.modulos.filter(
-          (userModule) => appModules.includes(userModule.id)
+          userModule => appModules.includes(userModule.id),
         );
 
-        user.modules = user.modules.map((userModule) => ({
+        user.modules = user.modules.map(userModule => ({
           id: userModule.id,
           name: userModule.nome,
           index: userModule.index,
@@ -27,13 +27,15 @@ export default class Auth {
 
         let module = null;
 
-        user.modules.forEach((userModule) => {
+        user.modules.forEach(userModule => {
           if (userModule.default) {
             module = userModule;
           }
         });
 
-        if (!module) [module] = user.modules;
+        if (!module) {
+          [module] = user.modules;
+        }
 
         AsyncStorage.multiSet([
           ['@smartApp:user', JSON.stringify(user)],
@@ -87,7 +89,7 @@ export default class Auth {
     return {};
   };
 
-  changeModule = async (module) => {
+  changeModule = async module => {
     AsyncStorage.setItem('@smartApp:module', JSON.stringify(module));
   };
 
@@ -96,7 +98,7 @@ export default class Auth {
       let user = await AsyncStorage.getItem('@smartApp:user');
       user = JSON.parse(user);
 
-      user.modules.forEach((userModule) => {
+      user.modules.forEach(userModule => {
         userModule.tabs = appModulesTabs[userModule.index];
       });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Button, Card, Divider } from 'react-native-elements';
+import { Button, Card, Divider } from '@rneui/themed';
 import Moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
 

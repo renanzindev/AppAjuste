@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Card } from 'react-native-elements';
+import { Card } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomTabNavigator from '../../Components/BottomTabNavigator';
@@ -16,7 +16,7 @@ export default function FaqView() {
           <Card.Divider style={styles.cardDivider} />
           <View style={styles.cardContent}>
             <Text style={styles.cardContentText}>
-              O aplicativo Car Soul SMART para fechamento de ordem ser serviços
+              O aplicativo Car Soul SMART para fechamento de ordem de serviços
               tem como intuito aprimorar a gestão de produção da empresa através
               do controle de estoque e de produção através da informação
               tempestiva da execução do serviços.

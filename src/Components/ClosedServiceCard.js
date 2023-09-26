@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { Card, Divider, Icon } from 'react-native-elements';
+import { Card, Divider, Icon } from '@rneui/themed';
 import Moment from 'moment';
 
 export default function ClosedServiceCard({ service }) {

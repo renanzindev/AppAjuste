@@ -5,8 +5,8 @@
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "workbench.colorTheme": "Dracula",
   "editor.formatOnSave": false,
-  "editor.rulers": [80,120],
-  "editor.tabSize": 2,
+  "editor.rulers": [120, 160],
+  "editor.tabSize": 4,
   "editor.renderLineHighlight": "gutter",
   "emmet.syntaxProfiles": {
       "javascript": "jsx",
@@ -19,22 +19,10 @@
   "editor.parameterHints.enabled": true,
 
   "eslint.validate": [
-      {
-          "language": "javascript",
-          "autoFix": true,
-      },
-      {
-          "language": "javascriptreact",
-          "autoFix": true,
-      },
-      {
-          "language": "typescript",
-          "autoFix": true,
-      },
-      {
-          "language": "typescriptreact",
-          "autoFix": true,
-      },
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true

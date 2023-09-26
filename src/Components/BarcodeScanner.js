@@ -2,8 +2,8 @@ import React from 'react'
 import { View, KeyboardAvoidingView } from 'react-native'
 import BarcodeMask from 'react-native-barcode-mask';
 import { RNCamera } from 'react-native-camera';
-import { Button } from 'react-native-elements';
 import { AuthContext } from '../Contexts/AuthContext';
+import { Button } from '@rneui/themed';
 
 export default function BarcodeScanner() {
   const { setBarcodeValue, setOnCamera } = React.useContext(AuthContext);
@@ -20,10 +20,11 @@ export default function BarcodeScanner() {
   return (
     <KeyboardAvoidingView style={styles.root}>
           <View style={styles.upperSection}>
-            <RNCamera
+            {<RNCamera
                 style={styles.preview}
                 torchMode="on"
                 onBarCodeRead={OnBarCodeRead}
+                captureAudio={false}
               >
               <BarcodeMask
                 width={'90%'}
@@ -33,7 +34,7 @@ export default function BarcodeScanner() {
                 lineAnimationDuration={1000}
                 outerMaskOpacity={0.8}
               />
-            </RNCamera>
+            </RNCamera>}
           </View>
           <View style={styles.lowerSection}>
             <Button

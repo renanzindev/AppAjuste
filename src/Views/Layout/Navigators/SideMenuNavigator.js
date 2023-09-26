@@ -1,6 +1,6 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/themed';
 import { InteractionManager } from 'react-native';
 import HomeView from '../../Pages/HomeView';
 import PayStubView from '../../Pages/PayStubView';
@@ -14,6 +14,7 @@ import ClosedServicesPeriodView from '../../Pages/Production/ClosedServicesPerio
 import ConfirmCheckoutView from '../../Pages/Logistics/ConfirmCheckoutView';
 import PendingDeliveriesView from '../../Pages/Logistics/PendingDeliveriesView';
 import LastDeliveriesView from '../../Pages/Logistics/LastDeliveriesView';
+import MyStockView from '../../Pages/Production/MyStockView';
 
 const Drawer = createDrawerNavigator();
 
@@ -64,6 +65,16 @@ export default function SideMenuNavigator() {
                 drawerLabel: 'Últimos Fechamentos',
                 drawerIcon: () => (
                   <Icon name="list" type="material" size={20} />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="MyStockView"
+              component={MyStockView}
+              options={{
+                drawerLabel: 'Meu Estoque',
+                drawerIcon: () => (
+                  <Icon name="inventory" type="material" size={20} />
                 ),
               }}
             />
@@ -141,6 +152,7 @@ export default function SideMenuNavigator() {
 
   return loaded ? (
     <Drawer.Navigator
+      screenOptions={{headerShown: false}}
       initialRouteName="HomeView"
       drawerContent={(props) => <LogoutButton {...props} />}
     >

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, Keyboard } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import { Input, Button } from '@rneui/themed';
 import ErrorMessage from '../../Components/ErrorMessage';
 import Loading from '../../Components/Loading';
 import { LoginStyles } from '../../Styles/LoginStyle';

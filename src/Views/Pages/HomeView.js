@@ -7,7 +7,7 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
-import { Avatar, Card, ListItem } from 'react-native-elements';
+import { Avatar, Card, ListItem } from '@rneui/themed';
 import Moment from 'moment';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../Contexts/AuthContext';

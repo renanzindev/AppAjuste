@@ -7,7 +7,7 @@ import {
   Icon,
   Input,
   Text,
-} from 'react-native-elements';
+} from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Moment from 'moment';
@@ -19,13 +19,7 @@ import { AuthContext } from '../../../Contexts/AuthContext';
 import BarcodeScanner from '../../../Components/BarcodeScanner';
 
 export default function CloseServiceView() {
-  const {
-    getUser,
-    onCamera,
-    setOnCamera,
-    barcodeValue,
-    setBarcodeValue,
-  } = React.useContext(AuthContext);
+  const { getUser, onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
   const [serviceCode, setServiceCode] = React.useState('');
   const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [osService, setOsService] = React.useState(null);

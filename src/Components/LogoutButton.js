@@ -4,7 +4,7 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import React from 'react';
-import { Button, Divider, Icon } from 'react-native-elements';
+import { Button, Divider, Icon } from '@rneui/themed';
 import { AuthContext } from '../Contexts/AuthContext';
 
 export default function LogoutButton(props) {

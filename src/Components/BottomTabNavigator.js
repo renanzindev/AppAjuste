@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, Icon } from 'react-native-elements';
+import { Button, Icon } from '@rneui/themed';
 import { AuthContext } from '../Contexts/AuthContext';
 
 export default function BottomTabNavigator() {

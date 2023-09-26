@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Card, Divider, Text } from 'react-native-elements';
+import { Button, Card, Divider, Text } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';

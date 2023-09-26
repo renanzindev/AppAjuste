@@ -1,7 +1,7 @@
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, View } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import { Button, Icon } from '@rneui/themed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { AuthContext } from '../Contexts/AuthContext';
 import { NavigationStyles } from '../Styles/NavigationStyles';
