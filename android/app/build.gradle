@@ -75,7 +75,7 @@ android {
 
     namespace "com.smartapp2"
     defaultConfig {
-        applicationId "com.smartapp2"
+        applicationId 'com.cs_smart'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
@@ -89,6 +89,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('smart_app.keystore')
+            storePassword 'cs481880'
+            keyAlias 'smart_app_key'
+            keyPassword 'cs481880'
+        }
     }
     buildTypes {
         debug {
@@ -97,7 +103,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
