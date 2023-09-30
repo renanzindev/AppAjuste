@@ -1,8 +1,9 @@
 import React from 'react';
+import Moment from 'moment';
 import { StyleSheet, RefreshControl, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Card, Divider, Icon, Overlay } from '@rneui/themed';
+import { Avatar, Badge, Button, Card, Divider, Icon, ListItem, Overlay } from '@rneui/themed';
 import { Dialog, SearchBar } from '@rneui/themed';
 import WarehouseOrderService from '../../../Services/WarehouseOrderService';
 import EmptyHistory from '../../../Components/EmptyHistory';
@@ -14,8 +15,9 @@ export default function MyStockView() {
   const [items, setItems] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [showReturnDialog, setShowReturnDialog] = React.useState(false);
+  const [showInfoDialog, setShowInfoDialog] = React.useState(false);
   const [search, setSearch] = React.useState(null);
-  // const [returnedItem, setReturnedItem] = React.useState(null);
+  const [infoItem, setInfoItem] = React.useState({});
 
   const navigation = useNavigation();
 
@@ -29,11 +31,30 @@ export default function MyStockView() {
 
     const [ok, response] = await WarehouseOrderService.myItems();
 
-    if (ok) setItemsOriginal(response);
+    if (ok) setItemsOriginal(response.map((item) => {
+      item.expanded = false;
+      item.items = item.items.map((subItem) => {
+        subItem.titulo = subItem.produto + ' - ' + Math.round(subItem.tamanho) + subItem.medida;
+
+        return subItem;
+      });
+
+      return item;
+    }));
   };
 
   const returnItem = () => {
     setShowReturnDialog(!showReturnDialog);
+  };
+
+  const toggleInfoDialog = (subItem = null) => {
+    const taggleStatus = !showInfoDialog
+    setShowInfoDialog(taggleStatus);
+    if (taggleStatus && subItem) {
+      setInfoItem(subItem);
+    }else {
+      setInfoItem({});
+    }
   };
 
   const defineFilteredItems = () => {
@@ -42,7 +63,7 @@ export default function MyStockView() {
     filteredItems = filterItems(filteredItems);
 
     setItems([
-      ...new Map(filteredItems.map((item) => [item.codigo, item])).values(),
+      ...new Map(filteredItems.map((item) => [item.produto, item])).values(),
     ]);
   };
 
@@ -70,6 +91,16 @@ export default function MyStockView() {
     return results;
   };
 
+  const expandItem = (item) => {
+    setItems(items.map((item2) => {
+      if (item2 === item) {
+        item2.expanded = !item2.expanded;
+      }
+
+      return item2;
+    }));
+  }
+
   React.useEffect(() => {
     defineFilteredItems();
   }, [itemsOriginal, search]);
@@ -83,6 +114,9 @@ export default function MyStockView() {
   }, []);
 
   const styles = StyleSheet.create({
+    bold: {
+      fontWeight: 'bold'
+    },
     container: {
       flex: 1,
     },
@@ -113,6 +147,14 @@ export default function MyStockView() {
     },
     titleButtonContainer: {
       width: '20%',
+      alignItems: 'flex-end',
+    },
+    subItemTextContainer: {
+      width: '60%',
+    },
+    subItemButtonContainer: {
+      width: '40%',
+      alignItems: 'flex-end',
     },
     barcodeButton: {
       height: 50,
@@ -213,6 +255,9 @@ export default function MyStockView() {
     itemButton: {
       backgroundColor: '#00bcd4',
     },
+    itemRightButton: {
+      paddingHorizontal: 10,
+    },
     returnButton: {
       width: 35,
       backgroundColor: '#00bcd4',
@@ -223,6 +268,25 @@ export default function MyStockView() {
     returnIcon: {
       margin: 0,
       padding: 0,
+    },
+    badge: {
+      width: 24,
+      height: 24,
+      marginRight: 10,
+      borderRadius: 30,
+    },
+    badgeText: {
+      fontSize: 16,
+    },
+    subListItem: {
+      backgroundColor: '#dedede',
+    },
+    subListItemTitle: {
+      fontSize: 18,
+    },
+    lineSpaced: {
+      lineHeight: 25,
+      color: '#5d585c',
     },
   });
 
@@ -255,54 +319,94 @@ export default function MyStockView() {
           ) : null}
             {items.length ? (
               items.map((item) => (
-                <Card key={item.codigo}>
-                  <View style={styles.titleContainer}>
-                    <View style={styles.titleTextContainer}>
-                      <Card.Title style={styles.itemTitle}>
-                        {item.produto} - {Math.round(item.tamanho, 3)}
-                        {item.medida}
-                      </Card.Title>
-                    </View>
-                    <View style={styles.titleButtonContainer}>
-                      <Button
-                        type="solid"
-                        icon={
-                          <Icon
-                            name="arrow-u-left-top-bold"
-                            type="material-community"
-                            color="white"
-                            style={styles.returnIcon}
-                            size={16}
-                          />
-                        }
-                        color="white"
-                        buttonStyle={styles.returnButton}
-                        onPress={returnItem}
-                      />
-                    </View>
-                  </View>
-                  <Text style={styles.itemSubtitle}>{item.codigo}</Text>
-                  <Divider style={{ marginBottom: 10 }} />
-                  <Text>
-                    <Text style={styles.bold}>OS:</Text> #
-                    {item.os_concessionaria} {item.concessionaria}
-                  </Text>
-                  <Text>
-                    <Text style={styles.bold}>SERVIÇO:</Text> {item.servico}
-                  </Text>
-                  <Text>
-                    <Text style={styles.bold}>VEÍCULO:</Text> {item.veiculo}
-                  </Text>
-                  <Text>
-                    <Text style={styles.bold}>CHASSI:</Text> {item.chassi}
-                  </Text>
-                </Card>
+                <ListItem.Accordion 
+                  key={item.produto} bottomDivider
+                  animation={{duration: '0ms'}}
+                  content={
+                  <>
+                    <ListItem.Content style={styles.titleContainer}>
+                      <View style={styles.titleTextContainer}>
+                      <ListItem.Title>{item.produto}</ListItem.Title>
+                      </View>
+                      <View style={styles.titleButtonContainer}>
+                        <Badge value={item.items.length} status="primary" textStyle={styles.badgeText} badgeStyle={styles.badge} />
+                      </View>
+                    </ListItem.Content>
+                    </>
+                  }
+                  isExpanded={item.expanded}
+                  onPress={() => {
+                    expandItem(item);
+                  }}
+                >
+                  {item.items.map((subItem, i) => (
+                    <ListItem.Swipeable 
+                      containerStyle={styles.subListItem}
+                      key={subItem.codigo} 
+                      bottomDivider
+                      leftContent={() => (
+                        <Button
+                          title='Devolver'
+                          icon={{ 
+                            name: 'arrow-u-left-top-bold',
+                            type: 'material-community', 
+                            color: 'white'
+                          }}
+                          buttonStyle={{ minHeight: '100%', backgroundColor: '#ffa700' }}
+                        />
+                      )}
+                      rightContent={() => (
+                        <Button
+                          title="Info"
+                          icon={{ name: 'info', color: 'white' }}
+                          buttonStyle={{ minHeight: '100%' }}
+                          onPress={() => toggleInfoDialog(subItem)}
+                        />
+                      )}
+                    >
+                      <ListItem.Content>
+                        <View style={styles.titleContainer}>
+                          <View style={styles.subItemTextContainer}>
+                            <ListItem.Title style={styles.subListItemTitle}>{subItem.codigo}</ListItem.Title>
+                          </View>
+                          <View style={styles.subItemButtonContainer}>
+                            <Button title='Confirmar' 
+                            icon={{
+                              name: "warning",
+                              size: 14,
+                              color: "white",
+                            }} color="warning" size="xs"
+                              buttonStyle={styles.itemRightButton}
+                              >
+                            </Button>
+                          </View>
+                        </View>
+                        <ListItem.Subtitle>OS: #{subItem.os_concessionaria} | {subItem.concessionaria}</ListItem.Subtitle>
+                      </ListItem.Content>
+                    </ListItem.Swipeable>
+                  ))}
+                </ListItem.Accordion>
               ))
             ) : (
               <EmptyHistory />
             )}
           </View>
         ) : null}
+        <Dialog isVisible={showInfoDialog} onBackdropPress={() => {toggleInfoDialog()}} 
+          overlayStyle={{width: '90%'}}
+        >
+          <Dialog.Title titleStyle={{marginBottom: 0}} title={infoItem.titulo} />
+          <Dialog.Title titleStyle={{fontSize: 20, marginBottom: 0}} title={infoItem.codigo} />
+          <Divider style={{marginTop: 10, marginBottom: 10}}></Divider>
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE POR:</Text> {infoItem.nome_entrega}</Text>
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE EM:</Text> {Moment(infoItem.data_agendamento).format('DD/MM/YYYY HH:mm')}</Text>
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>CONFIRMADO EM:</Text> {Moment(infoItem.data_agendamento).format('DD/MM/YYYY HH:mm')}</Text>
+          <Divider style={{marginTop: 10, marginBottom: 10}}></Divider>
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>OS:</Text> #{infoItem.os_concessionaria} | {infoItem.concessionaria}</Text>
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>SERVIÇO:</Text> {infoItem.servico}</Text>
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>VEÍCULO:</Text> {infoItem.veiculo}</Text>
+        </Dialog>
+
         <Dialog isVisible={showReturnDialog} onBackdropPress={returnItem}>
           <Dialog.Title title="Devolver Produto" />
           <Text>Você confirma que devolveu o Produto?</Text>
