@@ -2,8 +2,8 @@ import {create} from 'apisauce';
 import DownloadFile from './DownloadManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const baseURL = 'https://dev.valorizandoseucarro.com.br/api';
-// const baseURL = 'https://smart.valorizandoseucarro.com.br/api';
+// const baseURL = 'https://dev.valorizandoseucarro.com.br/api';
+const baseURL = 'https://smart.valorizandoseucarro.com.br/api';
 
 const Api = create({baseURL});
 
@@ -14,6 +14,7 @@ Api.addAsyncRequestTransform(request => async () => {
       request.headers.Authorization = `Bearer ${token}`;
     }
   } catch (error) {
+    console.log(error);
   }
 });
 

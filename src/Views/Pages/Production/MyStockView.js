@@ -100,6 +100,26 @@ export default function MyStockView() {
       return item2;
     }));
   }
+  const confirmDelivery = async (itemId) => {
+    setLoading(true);
+    const data = {
+      estoque_saida_produto_id: itemId,
+    }
+
+    const [ok] = await WarehouseOrderService.confirmDelivery(data);
+
+    if (ok) loadMyStock();
+  }
+  const requestReturn = async (itemId) => {
+    setLoading(true);
+    const data = {
+      estoque_saida_produto_id: itemId,
+    }
+
+    const [ok] = await WarehouseOrderService.requestReturn(data);
+
+    if (ok) loadMyStock();
+  }
 
   React.useEffect(() => {
     defineFilteredItems();
@@ -279,7 +299,7 @@ export default function MyStockView() {
       fontSize: 16,
     },
     subListItem: {
-      backgroundColor: '#dedede',
+      backgroundColor: '#eeeeee',
     },
     subListItemTitle: {
       fontSize: 18,
@@ -344,7 +364,7 @@ export default function MyStockView() {
                       containerStyle={styles.subListItem}
                       key={subItem.codigo} 
                       bottomDivider
-                      leftContent={() => (
+                      leftContent={subItem.data_recebimento && !subItem.data_devolucao ? () => (
                         <Button
                           title='Devolver'
                           icon={{ 
@@ -352,9 +372,21 @@ export default function MyStockView() {
                             type: 'material-community', 
                             color: 'white'
                           }}
-                          buttonStyle={{ minHeight: '100%', backgroundColor: '#ffa700' }}
+                          color="warning" 
+                          buttonStyle={{ minHeight: '100%' }}
+                          onPress={() => requestReturn(subItem.id)}
                         />
-                      )}
+                      ) : !subItem.data_recebimento ? 
+                      <Button
+                        title='Confirmar'
+                        icon={{ 
+                          name: 'check',
+                          color: 'white'
+                        }}
+                        color="success" 
+                        buttonStyle={{ minHeight: '100%' }}
+                        onPress={() => confirmDelivery(subItem.id)}
+                      /> : null}
                       rightContent={() => (
                         <Button
                           title="Info"
@@ -370,15 +402,36 @@ export default function MyStockView() {
                             <ListItem.Title style={styles.subListItemTitle}>{subItem.codigo}</ListItem.Title>
                           </View>
                           <View style={styles.subItemButtonContainer}>
+                            { !subItem.data_recebimento ? (
                             <Button title='Confirmar' 
-                            icon={{
-                              name: "warning",
-                              size: 14,
-                              color: "white",
-                            }} color="warning" size="xs"
+                              icon={{
+                                name: "check",
+                                size: 14,
+                                color: "white",
+                              }} 
+                              color="success" 
+                              size="xs"
+                              buttonStyle={styles.itemRightButton}
+                              onPress={() => {
+                                confirmDelivery(subItem.id)
+                              }}
+                              >
+                            </Button>
+                            ) : null }
+                            { subItem.data_devolucao ? (
+                            <Button title='Devolvido' 
+                              icon={{
+                                name: 'arrow-u-left-top-bold',
+                                type: 'material-community', 
+                                size: 14,
+                                color: "white",
+                              }} 
+                              color="warning" 
+                              size="xs"
                               buttonStyle={styles.itemRightButton}
                               >
                             </Button>
+                            ) : null }
                           </View>
                         </View>
                         <ListItem.Subtitle>OS: #{subItem.os_concessionaria} | {subItem.concessionaria}</ListItem.Subtitle>
@@ -400,7 +453,8 @@ export default function MyStockView() {
           <Divider style={{marginTop: 10, marginBottom: 10}}></Divider>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE POR:</Text> {infoItem.nome_entrega}</Text>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE EM:</Text> {Moment(infoItem.data_agendamento).format('DD/MM/YYYY HH:mm')}</Text>
-          <Text style={styles.lineSpaced}><Text style={styles.bold}>CONFIRMADO EM:</Text> {Moment(infoItem.data_agendamento).format('DD/MM/YYYY HH:mm')}</Text>
+          {infoItem.data_recebimento ? <Text style={styles.lineSpaced}><Text style={styles.bold}>CONFIRMADO EM:</Text> {Moment(infoItem.data_recebimento).format('DD/MM/YYYY HH:mm')}</Text> : null}
+          {infoItem.data_devolucao ? <Text style={styles.lineSpaced}><Text style={styles.bold}>DEVOLVIDO EM:</Text> {Moment(infoItem.data_devolucao).format('DD/MM/YYYY HH:mm')}</Text> : null}
           <Divider style={{marginTop: 10, marginBottom: 10}}></Divider>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>OS:</Text> #{infoItem.os_concessionaria} | {infoItem.concessionaria}</Text>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>SERVIÇO:</Text> {infoItem.servico}</Text>
