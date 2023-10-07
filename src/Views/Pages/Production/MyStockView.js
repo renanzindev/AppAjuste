@@ -1,6 +1,6 @@
 import React from 'react';
 import Moment from 'moment';
-import { StyleSheet, RefreshControl, Text, View } from 'react-native';
+import { StyleSheet, RefreshControl, Text, View, Dimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar, Badge, Button, Card, Divider, Icon, ListItem, Overlay } from '@rneui/themed';
@@ -9,17 +9,22 @@ import WarehouseOrderService from '../../../Services/WarehouseOrderService';
 import EmptyHistory from '../../../Components/EmptyHistory';
 import { useNavigation } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
 export default function MyStockView() {
   const [itemsOriginal, setItemsOriginal] = React.useState('');
   const [items, setItems] = React.useState('');
+  const [pendingItems, setPendingItems] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [showReturnDialog, setShowReturnDialog] = React.useState(false);
   const [showInfoDialog, setShowInfoDialog] = React.useState(false);
   const [search, setSearch] = React.useState(null);
   const [infoItem, setInfoItem] = React.useState({});
-
+  const [index, setIndex] = React.useState(0);
+  
   const navigation = useNavigation();
+
+  const initialLayout = { width: Dimensions.get('window').width };
 
   const updateSearch = (searchValue) => {
     setSearch(searchValue);
@@ -65,6 +70,21 @@ export default function MyStockView() {
     setItems([
       ...new Map(filteredItems.map((item) => [item.produto, item])).values(),
     ]);
+  };
+
+  const definePendingItems = () => {
+    const originalItems = [...itemsOriginal];
+    let results = [];
+
+    originalItems.forEach((item) => {
+      item.items.forEach((subItem) => {
+        if (! subItem.data_recebimento) {
+          results.push(subItem);
+        }
+      });
+    });
+
+    setPendingItems(results);
   };
 
   const filterItems = (itemsList) => {
@@ -121,9 +141,25 @@ export default function MyStockView() {
     if (ok) loadMyStock();
   }
 
+  const [routes] = React.useState([
+    { key: 'myStock', title: 'ESTOQUE' },
+    { key: 'pending', title: 'PENDENTES' },
+  ]);
+
+  const renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      activeColor="#007d71"
+      inactiveColor="#5d585c"
+      indicatorStyle={{ backgroundColor: '#007d71' }}
+      style={{ backgroundColor: 'white' }}
+    />
+  );
+
   React.useEffect(() => {
     defineFilteredItems();
-  }, [itemsOriginal, search]);
+    definePendingItems();
+  }, [itemsOriginal]);
 
   React.useEffect(() => {
     setLoading(false);
@@ -310,6 +346,176 @@ export default function MyStockView() {
     },
   });
 
+  const renderScene = SceneMap({
+    myStock: () => (!loading ? (
+        <View style={!items.length ? styles.contentView : null}>
+          {items.length ? (
+            items.map((item) => (
+              <ListItem.Accordion 
+                key={item.produto} bottomDivider
+                animation={{duration: '0ms'}}
+                content={
+                  <ListItem.Content style={styles.titleContainer}>
+                    <View style={styles.titleTextContainer}>
+                    <ListItem.Title>{item.produto}</ListItem.Title>
+                    </View>
+                    <View style={styles.titleButtonContainer}>
+                      <Badge value={item.items.length} status="primary" textStyle={styles.badgeText} badgeStyle={styles.badge} />
+                    </View>
+                  </ListItem.Content>
+                }
+                isExpanded={item.expanded}
+                onPress={() => {
+                  expandItem(item);
+                }}
+              >
+                {item.items.map((subItem, i) => (
+                  <ListItem.Swipeable 
+                    containerStyle={styles.subListItem}
+                    key={subItem.codigo} 
+                    bottomDivider
+                    leftContent={subItem.data_recebimento && !subItem.data_devolucao ? () => (
+                      <Button
+                        title='Devolver'
+                        icon={{ 
+                          name: 'arrow-u-left-top-bold',
+                          type: 'material-community', 
+                          color: 'white'
+                        }}
+                        color="warning" 
+                        buttonStyle={{ minHeight: '100%' }}
+                        onPress={() => requestReturn(subItem.id)}
+                      />
+                    ) : !subItem.data_recebimento ? 
+                    <Button
+                      title='Confirmar'
+                      icon={{ 
+                        name: 'check',
+                        color: 'white'
+                      }}
+                      color="success" 
+                      buttonStyle={{ minHeight: '100%' }}
+                      onPress={() => confirmDelivery(subItem.id)}
+                    /> : null}
+                    rightContent={() => (
+                      <Button
+                        title="Info"
+                        icon={{ name: 'info', color: 'white' }}
+                        buttonStyle={{ minHeight: '100%' }}
+                        onPress={() => toggleInfoDialog(subItem)}
+                      />
+                    )}
+                  >
+                    <ListItem.Content>
+                      <View style={styles.titleContainer}>
+                        <View style={styles.subItemTextContainer}>
+                          <ListItem.Title style={styles.subListItemTitle}>{subItem.codigo}</ListItem.Title>
+                        </View>
+                        <View style={styles.subItemButtonContainer}>
+                          { !subItem.data_recebimento ? (
+                          <Button title='Confirmar' 
+                            icon={{
+                              name: "check",
+                              size: 14,
+                              color: "white",
+                            }} 
+                            color="success" 
+                            size="xs"
+                            buttonStyle={styles.itemRightButton}
+                            onPress={() => {
+                              confirmDelivery(subItem.id)
+                            }}
+                            >
+                          </Button>
+                          ) : null }
+                          { subItem.data_devolucao ? (
+                          <Button title='Devolvido' 
+                            icon={{
+                              name: 'arrow-u-left-top-bold',
+                              type: 'material-community', 
+                              size: 14,
+                              color: "white",
+                            }} 
+                            color="warning" 
+                            size="xs"
+                            buttonStyle={styles.itemRightButton}
+                            >
+                          </Button>
+                          ) : null }
+                        </View>
+                      </View>
+                      <ListItem.Subtitle>OS: #{subItem.os_concessionaria} | {subItem.concessionaria}</ListItem.Subtitle>
+                    </ListItem.Content>
+                  </ListItem.Swipeable>
+                ))}
+              </ListItem.Accordion>
+            ))
+          ) : (
+            <EmptyHistory />
+          )}
+        </View>
+      ) : null),
+    pending: () => (!loading ? (
+            <View style={!pendingItems.length ? styles.contentView : null}>
+              {pendingItems.length ? (
+                pendingItems.map((item) => (
+                  <ListItem.Swipeable 
+                    containerStyle={styles.listItem}
+                    key={'pending_' + item.codigo} 
+                    bottomDivider
+                    leftContent={() => (
+                    <Button
+                      title='Confirmar'
+                      icon={{
+                        name: 'check',
+                        color: 'white'
+                      }}
+                      color="success" 
+                      buttonStyle={{ minHeight: '100%' }}
+                      onPress={() => confirmDelivery(item.id)}
+                    />)}
+                    rightContent={() => (
+                      <Button
+                        title="Info"
+                        icon={{ name: 'info', color: 'white' }}
+                        buttonStyle={{ minHeight: '100%' }}
+                        onPress={() => toggleInfoDialog(item)}
+                      />
+                    )}
+                  >
+                    <ListItem.Content>
+                      <View style={styles.titleContainer}>
+                        <View style={styles.subItemTextContainer}>
+                          <ListItem.Title style={styles.subListItemTitle}>{item.produto}</ListItem.Title>
+                        </View>
+                        <View style={styles.subItemButtonContainer}>
+                          <Button title='Confirmar' 
+                            icon={{
+                              name: "check",
+                              size: 14,
+                              color: "white",
+                            }} 
+                            color="success" 
+                            size="xs"
+                            buttonStyle={styles.itemRightButton}
+                            onPress={() => {
+                              confirmDelivery(item.id)
+                            }}
+                            >
+                          </Button>
+                        </View>
+                      </View>
+                      <ListItem.Subtitle>{item.codigo}</ListItem.Subtitle>
+                    </ListItem.Content>
+                  </ListItem.Swipeable>
+                ))
+              ) : (
+                <EmptyHistory />
+              )}
+            </View>
+          ) : null),
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -323,128 +529,15 @@ export default function MyStockView() {
           />
         }
       >
-        <Text style={styles.title2}>MEU ESTOQUE</Text>
-        <Divider />
-        {!loading ? (
-          <View style={!items.length ? styles.contentView : null}>
-          {itemsOriginal.length ? (
-            <SearchBar
-              placeholder="Pesquisar Produto"
-              onChangeText={updateSearch}
-              containerStyle={styles.searchBarContainer}
-              inputContainerStyle={styles.searchBarInputContainer}
-              inputStyle={styles.searchBarInput}
-              value={search}
-            />
-          ) : null}
-            {items.length ? (
-              items.map((item) => (
-                <ListItem.Accordion 
-                  key={item.produto} bottomDivider
-                  animation={{duration: '0ms'}}
-                  content={
-                  <>
-                    <ListItem.Content style={styles.titleContainer}>
-                      <View style={styles.titleTextContainer}>
-                      <ListItem.Title>{item.produto}</ListItem.Title>
-                      </View>
-                      <View style={styles.titleButtonContainer}>
-                        <Badge value={item.items.length} status="primary" textStyle={styles.badgeText} badgeStyle={styles.badge} />
-                      </View>
-                    </ListItem.Content>
-                    </>
-                  }
-                  isExpanded={item.expanded}
-                  onPress={() => {
-                    expandItem(item);
-                  }}
-                >
-                  {item.items.map((subItem, i) => (
-                    <ListItem.Swipeable 
-                      containerStyle={styles.subListItem}
-                      key={subItem.codigo} 
-                      bottomDivider
-                      leftContent={subItem.data_recebimento && !subItem.data_devolucao ? () => (
-                        <Button
-                          title='Devolver'
-                          icon={{ 
-                            name: 'arrow-u-left-top-bold',
-                            type: 'material-community', 
-                            color: 'white'
-                          }}
-                          color="warning" 
-                          buttonStyle={{ minHeight: '100%' }}
-                          onPress={() => requestReturn(subItem.id)}
-                        />
-                      ) : !subItem.data_recebimento ? 
-                      <Button
-                        title='Confirmar'
-                        icon={{ 
-                          name: 'check',
-                          color: 'white'
-                        }}
-                        color="success" 
-                        buttonStyle={{ minHeight: '100%' }}
-                        onPress={() => confirmDelivery(subItem.id)}
-                      /> : null}
-                      rightContent={() => (
-                        <Button
-                          title="Info"
-                          icon={{ name: 'info', color: 'white' }}
-                          buttonStyle={{ minHeight: '100%' }}
-                          onPress={() => toggleInfoDialog(subItem)}
-                        />
-                      )}
-                    >
-                      <ListItem.Content>
-                        <View style={styles.titleContainer}>
-                          <View style={styles.subItemTextContainer}>
-                            <ListItem.Title style={styles.subListItemTitle}>{subItem.codigo}</ListItem.Title>
-                          </View>
-                          <View style={styles.subItemButtonContainer}>
-                            { !subItem.data_recebimento ? (
-                            <Button title='Confirmar' 
-                              icon={{
-                                name: "check",
-                                size: 14,
-                                color: "white",
-                              }} 
-                              color="success" 
-                              size="xs"
-                              buttonStyle={styles.itemRightButton}
-                              onPress={() => {
-                                confirmDelivery(subItem.id)
-                              }}
-                              >
-                            </Button>
-                            ) : null }
-                            { subItem.data_devolucao ? (
-                            <Button title='Devolvido' 
-                              icon={{
-                                name: 'arrow-u-left-top-bold',
-                                type: 'material-community', 
-                                size: 14,
-                                color: "white",
-                              }} 
-                              color="warning" 
-                              size="xs"
-                              buttonStyle={styles.itemRightButton}
-                              >
-                            </Button>
-                            ) : null }
-                          </View>
-                        </View>
-                        <ListItem.Subtitle>OS: #{subItem.os_concessionaria} | {subItem.concessionaria}</ListItem.Subtitle>
-                      </ListItem.Content>
-                    </ListItem.Swipeable>
-                  ))}
-                </ListItem.Accordion>
-              ))
-            ) : (
-              <EmptyHistory />
-            )}
-          </View>
-        ) : null}
+        <TabView
+          lazy
+          renderTabBar={renderTabBar}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={initialLayout}
+          swipeEnabled={false}
+        />
         <Dialog isVisible={showInfoDialog} onBackdropPress={() => {toggleInfoDialog()}} 
           overlayStyle={{width: '90%'}}
         >
@@ -465,8 +558,8 @@ export default function MyStockView() {
           <Dialog.Title title="Devolver Produto" />
           <Text>Você confirma que devolveu o Produto?</Text>
         </Dialog>
-      </ScrollView>
-      <BottomTabNavigator />
-    </SafeAreaView>
+        <BottomTabNavigator />
+        </ScrollView>
+      </SafeAreaView>
   );
 }
