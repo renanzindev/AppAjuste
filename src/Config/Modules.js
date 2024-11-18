@@ -8,6 +8,12 @@ export const appModulesTabs = {
       route: 'HomeView',
     },
     {
+      icon: 'cart',
+      iconType: 'material-community',
+      title: 'REQUISITAR',
+      route: 'RequestProductsView',
+    },
+    {
       icon: 'calendar-today',
       iconType: 'material',
       title: 'PCP',
