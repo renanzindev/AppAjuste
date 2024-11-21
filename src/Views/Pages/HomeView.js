@@ -35,6 +35,7 @@ export default function HomeView() {
   React.useEffect(() => {
     getUser().then((response) => {
       setUser(response);
+      global.user = response;
     });
     bindHomeView();
   }, []);

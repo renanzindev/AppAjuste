@@ -5,6 +5,7 @@ import { InteractionManager } from 'react-native';
 import HomeView from '../../Pages/HomeView';
 import PayStubView from '../../Pages/PayStubView';
 import CloseServiceView from '../../Pages/Production/CloseServiceView';
+import RequestProductsView from '../../Pages/Production/RequestProductsView';
 import PcpView from '../../Pages/Production/PcpView';
 import LogoutButton from '../../../Components/LogoutButton';
 import FaqView from '../../Pages/FaqView';
@@ -41,6 +42,16 @@ export default function SideMenuNavigator() {
                 drawerLabel: 'PCP',
                 drawerIcon: () => (
                   <Icon name="calendar-today" type="material" size={20} />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="RequestProductsView"
+              component={RequestProductsView}
+              options={{
+                drawerLabel: 'REQUISITAR',
+                drawerIcon: () => (
+                  <Icon name="cart" type="material-community" size={20} />
                 ),
               }}
             />
