@@ -17,6 +17,7 @@ import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import EmptyHistory from '../../../Components/EmptyHistory';
 import ProductsService from '../../../Services/ProductsService';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 
 const styles = StyleSheet.create({
   container: {
@@ -62,6 +63,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#00bcd4',
     marginTop: 10
   },
+  pickerContainer: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#CBD5DD',
+    borderRadius: 2,
+    backgroundColor: 'white',
+  },
 })
 
 export default function RequestProductsView() {
@@ -69,22 +78,25 @@ export default function RequestProductsView() {
   const [productCode, setProductCode] = React.useState('');
   const [productAmount, setProductAmount] = React.useState('');
   const [products, setProducts] = React.useState([]);
-  const [user, setUser] = React.useState({});
+  const [stores, setStores] = React.useState([]);
+  const [storeId, setStoreId] = React.useState('');
   const [productSelected, setProductSelected] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
   const navigation = useNavigation();
+
   const getProducts = async () => {
     setProducts([]);
-    setLoading(true);
+    setProductSelected([]);
 
     const [ok, response] = await ProductsService.index();
 
     if (ok) setProducts(response);
   }
+
   const clearForm = () => {
     setProductAmount('');
     setProductCode('');
   }
+
   const handleProductCodeChange = () => {
     let product = products.filter((product) => product.id == productCode);
     if(product.length && !productSelected.includes(product[0])) {
@@ -106,7 +118,7 @@ export default function RequestProductsView() {
   };
 
   const requestProducts = async () => {
-    concessionaria_id = user.funcionario.cargo_atual.filter((cargo) => cargo.data_demissao == null)[0].pivot.concessionaria_local_id;
+    concessionaria_id = storeId;
     produtos_selecionados = productSelected.map((product) => ({
       id: product.id,
       quantidade: product.quantidade_requisitada,
@@ -129,13 +141,47 @@ export default function RequestProductsView() {
 
   React.useEffect(() => {
     getProducts();
-    setUser(global.user);
+    if(global.user.concessionarias && global.user.concessionarias.length > 0) {
+      setStores(global.user.concessionarias.map((store) => store.concessionaria));
+    }
   }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.containerScroll}>
         <Text style={styles.title2}>REQUISITAR MATERIAL</Text>
+        <Divider />
+        <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={storeId}
+          style={{ height: 50 }}
+          mode="dropdown"
+          onValueChange={setStoreId}
+        >
+          {!storeId ? (
+            <Picker.Item
+              key={0}
+              label="SELECIONE CONCESSIONARIA"
+              value={null}
+            />
+          ) : null}
+          {stores.length ? 
+            stores.map((store) => (
+              <Picker.Item 
+                key={store.id}
+                label={store.nome}
+                value={store.id}
+              />
+            ))
+          : (
+            <Picker.Item 
+              key={9999}
+              label="VINCULAR CONCESSIONÁRIA AO PRODUTIVO!"
+              value={null}
+            />
+          )}
+        </Picker>
+        </View>
         <Divider />
         <View style={styles.barcodeContainer}>
           <View style={styles.amountInputContainer}>
@@ -145,6 +191,7 @@ export default function RequestProductsView() {
               onChangeText={setProductAmount}
               value={productAmount}
               maxLength={12}
+              disabled={!storeId}
             />
           </View>
           <View style={styles.codeInputContainer}>

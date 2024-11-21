@@ -2,6 +2,7 @@ import Api from '../Config/Api';
 import Utils from '../Config/Utils';
 
 let moduleIndex = '';
+const v3 = true;
 
 const ProductsService = {
   index: async () => {
