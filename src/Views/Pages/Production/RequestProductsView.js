@@ -98,14 +98,16 @@ export default function RequestProductsView() {
   }
 
   const handleProductCodeChange = () => {
-    let product = products.filter((product) => product.id == productCode);
-    if(product.length && !productSelected.includes(product[0])) {
-      productSelected.push(product[0]);
-      handleProductAmountChange();
-      clearForm();
-    } else if(product.length && productSelected.includes(product[0])) {
-      setProductSelected(productSelected.filter((product) => product.id != productCode));
-      clearForm();
+    if(productCode.length > 1) {
+      let product = products.filter((product) => product.id == productCode);
+      if(product.length && !productSelected.includes(product[0])) {
+        productSelected.push(product[0]);
+        handleProductAmountChange();
+        clearForm();
+      } else if(product.length && productSelected.includes(product[0])) {
+        setProductSelected(productSelected.filter((product) => product.id != productCode));
+        clearForm();
+      }
     }
   };
 
