@@ -14,6 +14,7 @@ import ClosedServicesView from '../../Pages/Production/ClosedServicesView';
 import ClosedServicesPeriodView from '../../Pages/Production/ClosedServicesPeriodView';
 import ConfirmCheckoutView from '../../Pages/Logistics/ConfirmCheckoutView';
 import PendingDeliveriesView from '../../Pages/Logistics/PendingDeliveriesView';
+import CheckoutCarView from '../../Pages/Logistics/CheckoutCarView';
 import LastDeliveriesView from '../../Pages/Logistics/LastDeliveriesView';
 import MyStockView from '../../Pages/Production/MyStockView';
 
@@ -151,6 +152,20 @@ export default function SideMenuNavigator() {
                 ),
               }}
             />
+            <Drawer.Screen
+              name="CheckoutCarView"
+              component={CheckoutCarView}
+              options={{
+                drawerLabel: 'Checkout',
+                drawerIcon: () => (
+                  <Icon
+                    name="car-side"
+                    type="material-community"
+                    size={20}
+                  />
+                ),
+              }}
+            />
           </>
         );
         break;
@@ -175,14 +190,14 @@ export default function SideMenuNavigator() {
           drawerIcon: () => <Icon name="home" size={20} />,
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="PayStubView"
         component={PayStubView}
         options={{
           drawerLabel: 'Holerite',
           drawerIcon: () => <Icon name="money" type="material" size={20} />,
         }}
-      />
+      /> */}
       {views}
 
       <Drawer.Screen

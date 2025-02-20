@@ -30,7 +30,7 @@ export const appModulesTabs = {
     {
       icon: 'home',
       iconType: 'material',
-      title: 'INÍCIO',
+      title: 'INÍCIOs',
       route: 'HomeView',
     },
     {
@@ -44,6 +44,12 @@ export const appModulesTabs = {
       iconType: 'material-community',
       title: 'EM TRÂNSITO',
       route: 'PendingDeliveriesView',
+    },
+    {
+      icon: 'car-side',
+      iconType: 'material-community',
+      title: 'CHECKOUT',
+      route: 'CheckoutCarView',
     },
   ],
 };

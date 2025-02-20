@@ -81,6 +81,32 @@ const OsServiceService = {
       return error;
     }
   },
+
+  getOsByChassi: async (data) => {
+    try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
+      const result = await Api.post(`${moduleIndex}/os/consultar_chassi`, data);
+      return [result.ok, result.data];
+    } catch (error) {
+      return error;
+    }
+  },
+  
+  salvarObsOs: async (data) => {
+    try {
+      await Utils.defaultModuleIndex().then((result) => {
+        moduleIndex = result;
+      });
+
+      const result = await Api.post(`${moduleIndex}/os/observacao/salvar`, data);
+      return [result.ok, result.data];
+    } catch (error) {
+      return error;
+    }
+  },
 };
 
 export default OsServiceService;
