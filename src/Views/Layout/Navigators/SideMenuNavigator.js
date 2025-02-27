@@ -155,11 +155,35 @@ export default function SideMenuNavigator() {
             <Drawer.Screen
               name="CheckoutCarView"
               component={CheckoutCarView}
+              initialParams={{
+                title: 'CheckIn',
+                buttonName: 'Confirmar CheckIn',
+                prefix: 'CheckIn: O veículo está em condições para executar os serviços?\n\n'
+              }}
               options={{
-                drawerLabel: 'Checkout',
+                drawerLabel: 'CheckIn',
                 drawerIcon: () => (
                   <Icon
                     name="car-side"
+                    type="material-community"
+                    size={20}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="CheckoutCarView1"
+              component={CheckoutCarView}
+              initialParams={{
+                title: 'Qualidade Serviço',
+                buttonName: 'Assinatura',
+                prefix: 'CheckOut: Você aprova a qualidade dos serviços realizados? Porque?\n\n'
+              }}
+              options={{
+                drawerLabel: 'Qualidade Serviço',
+                drawerIcon: () => (
+                  <Icon
+                    name="car-sports"
                     type="material-community"
                     size={20}
                   />

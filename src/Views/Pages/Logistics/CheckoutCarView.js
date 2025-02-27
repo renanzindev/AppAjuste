@@ -15,13 +15,14 @@ import EmptyHistory from '../../../Components/EmptyHistory';
 import { Button, Card } from '@rneui/base';
 import OsServiceService from '../../../Services/OsServiceService';
 
-export default function CheckoutCarView() {
+export default function CheckoutCarView({ route }) {
   const isFocused = useIsFocused();
   const [ordemServico, setOrdemServico] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [inputChassi, setInputChassi] = React.useState(null);
   const [inputObs, setInputObs] = React.useState(null);
   const [osId, setOsId] = React.useState(null);
+  const params = route.params || {};
 
   const getOsByChassi = async () => {
     setLoading(true);
@@ -34,7 +35,7 @@ export default function CheckoutCarView() {
      setOrdemServico(response);
      setOsId(response.os[0].id)
     }
-
+    setInputObs(params.prefix);
     setLoading(false);
   };
   
@@ -135,7 +136,7 @@ export default function CheckoutCarView() {
           />
         }
       >
-        <Text style={styles.title}>ENTRADA E SAÍDA DE VEÍCULOS</Text>
+        <Text style={styles.title}>{params.title}</Text>
         <Divider />
         {!loading ? (
           <>
@@ -158,9 +159,9 @@ export default function CheckoutCarView() {
                     {ordemServico.modelo.nome} | {ordemServico.cor.nome} | {ordemServico.ano_modelo} | {ordemServico.chassi} 
                   </Card.Title>
                   <View style={styles.cardExibir}>
-                    <TextInput 
-                      placeholder='Descreva aqui as condições do veículo recebido no caso de ENTRADA e condições do serviços executados no caso de ENTREGA' 
-                      text={inputObs} style={styles.cardInputObs} 
+                    <TextInput
+                      value={inputObs} 
+                      style={styles.cardInputObs} 
                       onChangeText={setInputObs} 
                       multiline={true}
                       numberOfLines={20}
@@ -168,7 +169,7 @@ export default function CheckoutCarView() {
                     <Card.Divider />
                     <Button
                       type='solid'
-                      title="Salvar"
+                      title={params.buttonName}
                       buttonStyle={styles.cardButtonSalvar}
                       onPress={salvarObsOs}
                     />
