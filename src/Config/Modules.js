@@ -7,12 +7,12 @@ export const appModulesTabs = {
       title: 'INÍCIO',
       route: 'HomeView',
     },
-    {
-      icon: 'cart',
-      iconType: 'material-community',
-      title: 'REQUISITAR',
-      route: 'RequestProductsView',
-    },
+    // {
+    //   icon: 'cart',
+    //   iconType: 'material-community',
+    //   title: 'REQUISITAR',
+    //   route: 'RequestProductsView',
+    // },
     {
       icon: 'calendar-today',
       iconType: 'material',

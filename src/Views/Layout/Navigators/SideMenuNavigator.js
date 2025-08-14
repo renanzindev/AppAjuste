@@ -46,7 +46,7 @@ export default function SideMenuNavigator() {
                 ),
               }}
             />
-            <Drawer.Screen
+            {/* <Drawer.Screen
               name="RequestProductsView"
               component={RequestProductsView}
               options={{
@@ -55,7 +55,7 @@ export default function SideMenuNavigator() {
                   <Icon name="cart" type="material-community" size={20} />
                 ),
               }}
-            />
+            /> */}
             <Drawer.Screen
               name="CloseServiceView"
               component={CloseServiceView}
