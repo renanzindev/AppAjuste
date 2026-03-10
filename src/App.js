@@ -1,15 +1,16 @@
 import 'react-native-gesture-handler';
 import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 import { AuthNavigator } from './Views/Layout/Navigators/AuthNavigator';
 import { MainNavigator } from './Views/Layout/Navigators/MainNavigator';
 import { AuthContext } from './Contexts/AuthContext';
 import AuthService from './Services/AuthService';
 import { NavigationTheme } from './Styles/NavigationTheme';
 import ModulesBottomSheet from './Components/ModulesBottomSheet';
-import 'moment/locale/pt-br';
+import 'dayjs/locale/pt-br';
 
 const RootStack = createStackNavigator();
 
@@ -108,10 +109,11 @@ export default () => {
   }, [loggedIn]);
 
   React.useEffect(() => {
-    Moment.locale('pt-br');
+    dayjs.locale('pt-br');
   }, []);
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <AuthContext.Provider value={auth}>
       <NavigationContainer theme={NavigationTheme}>
         {loaded ? (
@@ -133,5 +135,6 @@ export default () => {
       </NavigationContainer>
       <ModulesBottomSheet />
     </AuthContext.Provider>
+    </GestureHandlerRootView>
   );
 };

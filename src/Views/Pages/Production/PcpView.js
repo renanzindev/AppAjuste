@@ -14,7 +14,7 @@ import {
   SearchBar,
 } from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import EmptyHistory from '../../../Components/EmptyHistory';
@@ -42,7 +42,7 @@ export default function PcpView() {
       const date = availableDates[selectedDate];
 
       results = scheduleList.filter((schedule) => {
-        const scheduleDate = Moment(schedule.data_agendamento).format(
+        const scheduleDate = dayjs(schedule.data_agendamento).format(
           'DD/MM/YYYY'
         );
 
@@ -104,7 +104,7 @@ export default function PcpView() {
       dates = [
         ...new Set(
           pcpSchedules.map((schedule) =>
-            Moment(schedule.data_agendamento).format('DD/MM/YYYY')
+            dayjs(schedule.data_agendamento).format('DD/MM/YYYY')
           )
         ),
       ];
@@ -112,7 +112,7 @@ export default function PcpView() {
       dates2 = [
         ...new Set(
           pcpSchedules.map((schedule) =>
-            Moment(schedule.data_agendamento).format('DD/MM')
+            dayjs(schedule.data_agendamento).format('DD/MM')
           )
         ),
       ];
@@ -303,7 +303,7 @@ export default function PcpView() {
               schedules.map((schedule) => (
                 <Card key={schedule.codigo}>
                   <Card.Title style={styles.scheduleTitle}>
-                    {Moment(schedule.data_agendamento).format(
+                    {dayjs(schedule.data_agendamento).format(
                       'DD/MM/YYYY HH:mm'
                     )}
                     {`  `}

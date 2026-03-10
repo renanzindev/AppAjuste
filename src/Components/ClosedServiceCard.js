@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import { Card, Divider, Icon } from '@rneui/themed';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 
 export default function ClosedServiceCard({ service }) {
   const styles = StyleSheet.create({
@@ -94,7 +94,7 @@ export default function ClosedServiceCard({ service }) {
       {service.os_servico?.pcp_agendamento?.data_agendamento ? (
         <View style={{ flexDirection: 'row' }}>
           <Card.Title style={styles.serviceTitle}>
-            {Moment(
+            {dayjs(
               service.os_servico?.pcp_agendamento?.data_agendamento
             ).format('DD/MM/YYYY HH:mm')}
           </Card.Title>
@@ -120,7 +120,7 @@ export default function ClosedServiceCard({ service }) {
       ) : (
         <View style={{ flexDirection: 'row' }}>
           <Card.Title style={styles.serviceTitle}>
-            {Moment(service.created_at).format('DD/MM/YYYY HH:mm')}
+            {dayjs(service.created_at).format('DD/MM/YYYY HH:mm')}
           </Card.Title>
           <View style={[styles.badge, styles.badgeWarning]}>
             <Text style={styles.badgeText}>MANUAL</Text>
@@ -172,7 +172,7 @@ export default function ClosedServiceCard({ service }) {
           </Text>
           <Text style={styles.lineSpaced}>
             <Text style={styles.bold}>DATA:</Text>{' '}
-            {Moment(service.data_finalizacao).format('DD/MM/YYYY HH:mm')}
+            {dayjs(service.data_finalizacao).format('DD/MM/YYYY HH:mm')}
           </Text>
         </View>
       ) : null}
@@ -185,7 +185,7 @@ export default function ClosedServiceCard({ service }) {
           </Text>
           <Text style={styles.lineSpaced}>
             <Text style={styles.bold}>DATA:</Text>{' '}
-            {Moment(service.data_cancelamento).format('DD/MM/YYYY HH:mm')}
+            {dayjs(service.data_cancelamento).format('DD/MM/YYYY HH:mm')}
           </Text>
           <Text style={styles.lineSpaced}>
             <Text style={styles.bold}>MOTIVO:</Text>{' '}

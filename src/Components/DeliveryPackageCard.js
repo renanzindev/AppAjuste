@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, Card, Divider } from '@rneui/themed';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 import { useNavigation } from '@react-navigation/native';
 
 export default function DeliveryPackageCard({ deliveryPackage, showButton }) {
@@ -122,7 +122,7 @@ export default function DeliveryPackageCard({ deliveryPackage, showButton }) {
 
         <Text style={styles.mgTop20}>
           <Text style={styles.bold}>CRIADO EM:</Text>{' '}
-          {Moment(deliveryPackage.created_at).format('DD/MM/YY HH:mm')}
+          {dayjs(deliveryPackage.created_at).format('DD/MM/YY HH:mm')}
         </Text>
         <Text>
           <Text style={styles.bold}>CRIADO POR:</Text>{' '}
@@ -140,7 +140,7 @@ export default function DeliveryPackageCard({ deliveryPackage, showButton }) {
           <>
             <Text>
               <Text style={styles.bold}>RECEBIDO EM:</Text>{' '}
-              {Moment(deliveryPackage.data_finalizacao).format(
+              {dayjs(deliveryPackage.data_finalizacao).format(
                 'DD/MM/YY HH:mm'
               )}
             </Text>

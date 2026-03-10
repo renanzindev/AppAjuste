@@ -1,6 +1,6 @@
 import { Alert, NativeModules, PermissionsAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNFetchBlob from "rn-fetch-blob";
+import RNFetchBlob from 'react-native-blob-util';
 
 
 async function getToken() {

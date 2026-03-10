@@ -1,5 +1,5 @@
 import React from 'react';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 import { StyleSheet, RefreshControl, Text, View, Dimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -545,9 +545,9 @@ export default function MyStockView() {
           <Dialog.Title titleStyle={{fontSize: 20, marginBottom: 0}} title={infoItem.codigo} />
           <Divider style={{marginTop: 10, marginBottom: 10}}></Divider>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE POR:</Text> {infoItem.nome_entrega}</Text>
-          <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE EM:</Text> {Moment(infoItem.data_agendamento).format('DD/MM/YYYY HH:mm')}</Text>
-          {infoItem.data_recebimento ? <Text style={styles.lineSpaced}><Text style={styles.bold}>CONFIRMADO EM:</Text> {Moment(infoItem.data_recebimento).format('DD/MM/YYYY HH:mm')}</Text> : null}
-          {infoItem.data_devolucao ? <Text style={styles.lineSpaced}><Text style={styles.bold}>DEVOLVIDO EM:</Text> {Moment(infoItem.data_devolucao).format('DD/MM/YYYY HH:mm')}</Text> : null}
+          <Text style={styles.lineSpaced}><Text style={styles.bold}>ENTREGUE EM:</Text> {dayjs(infoItem.data_agendamento).format('DD/MM/YYYY HH:mm')}</Text>
+          {infoItem.data_recebimento ? <Text style={styles.lineSpaced}><Text style={styles.bold}>CONFIRMADO EM:</Text> {dayjs(infoItem.data_recebimento).format('DD/MM/YYYY HH:mm')}</Text> : null}
+          {infoItem.data_devolucao ? <Text style={styles.lineSpaced}><Text style={styles.bold}>DEVOLVIDO EM:</Text> {dayjs(infoItem.data_devolucao).format('DD/MM/YYYY HH:mm')}</Text> : null}
           <Divider style={{marginTop: 10, marginBottom: 10}}></Divider>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>OS:</Text> #{infoItem.os_concessionaria} | {infoItem.concessionaria}</Text>
           <Text style={styles.lineSpaced}><Text style={styles.bold}>SERVIÇO:</Text> {infoItem.servico}</Text>

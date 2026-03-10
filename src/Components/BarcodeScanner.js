@@ -1,64 +1,88 @@
-import React from 'react'
-import { View, KeyboardAvoidingView } from 'react-native'
-import BarcodeMask from 'react-native-barcode-mask';
-import { RNCamera } from 'react-native-camera';
+import React from 'react';
+import { View, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import {
+  Camera,
+  useCameraDevice,
+  useCameraPermission,
+  useCodeScanner,
+} from 'react-native-vision-camera';
 import { AuthContext } from '../Contexts/AuthContext';
 import { Button } from '@rneui/themed';
 
 export default function BarcodeScanner() {
   const { setBarcodeValue, setOnCamera } = React.useContext(AuthContext);
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const device = useCameraDevice('back');
 
-  const OnBarCodeRead = (scanResult) => {
-    setBarcodeValue(scanResult.data ? scanResult.data: '');
-    setOnCamera(false);
-  }
+  React.useEffect(() => {
+    if (!hasPermission) {
+      requestPermission();
+    }
+  }, [hasPermission, requestPermission]);
 
-  const OnGetItemPress = () => {
+  const codeScanner = useCodeScanner({
+    codeTypes: ['ean-13', 'ean-8', 'qr', 'code-128', 'code-39', 'data-matrix'],
+    onCodeScanned: (codes) => {
+      if (codes.length > 0) {
+        setBarcodeValue(codes[0].value ?? '');
+        setOnCamera(false);
+      }
+    },
+  });
+
+  const onCancelPress = () => {
     setOnCamera(false);
-  }
+  };
+
+  if (!device || !hasPermission) return null;
 
   return (
     <KeyboardAvoidingView style={styles.root}>
-          <View style={styles.upperSection}>
-            {<RNCamera
-                style={styles.preview}
-                torchMode="on"
-                onBarCodeRead={OnBarCodeRead}
-                captureAudio={false}
-              >
-              <BarcodeMask
-                width={'90%'}
-                height={180}
-                showAnimatedLine={true}
-                animatedLineColor="#ff0000"
-                lineAnimationDuration={1000}
-                outerMaskOpacity={0.8}
-              />
-            </RNCamera>}
-          </View>
-          <View style={styles.lowerSection}>
-            <Button
-                onPress={OnGetItemPress}
-                title={"Cancelar"}
-                buttonStyle={styles.cancelButton}
-            >
-            </Button>
-          </View>
-        </KeyboardAvoidingView>
-  )
+      <View style={styles.upperSection}>
+        <Camera
+          style={styles.preview}
+          device={device}
+          isActive={true}
+          codeScanner={codeScanner}
+          torch="on"
+        />
+        <View style={styles.scanOverlay} pointerEvents="none">
+          <View style={styles.scanFrame} />
+        </View>
+      </View>
+      <View style={styles.lowerSection}>
+        <Button
+          onPress={onCancelPress}
+          title="Cancelar"
+          buttonStyle={styles.cancelButton}
+        />
+      </View>
+    </KeyboardAvoidingView>
+  );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   root: {
-      flex: 1,
-  },
-  preview: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
   upperSection: {
-      flex: 1
+    flex: 1,
+  },
+  preview: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  scanOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scanFrame: {
+    width: '80%',
+    height: 180,
+    borderWidth: 2,
+    borderColor: '#ff0000',
+    borderRadius: 8,
+    backgroundColor: 'transparent',
   },
   lowerSection: {
     position: 'relative',
@@ -76,7 +100,6 @@ const styles = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
   },
   cancelButton: {
@@ -84,7 +107,4 @@ const styles = {
     height: 40,
     backgroundColor: '#00bcd4',
   },
-  camera: {
-      height: '100%',
-  },
-};
+});

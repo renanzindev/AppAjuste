@@ -1,0 +1,42 @@
+{
+  "name": "smart-web",
+  "version": "1.3.7",
+  "private": true,
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-native-picker/picker": "^2.7.5",
+    "@react-navigation/native": "^7.1.33",
+    "@react-navigation/stack": "^7.2.0",
+    "@rneui/base": "^4.0.0-rc.8",
+    "@rneui/themed": "^4.0.0-rc.8",
+    "apisauce": "^3.0.1",
+    "dayjs": "^1.11.13",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.77.1",
+    "react-native-gesture-handler": "^2.21.2",
+    "react-native-reanimated": "^3.16.6",
+    "react-native-safe-area-context": "^5.3.0",
+    "react-native-screens": "^4.4.0",
+    "react-native-web": "^0.19.13",
+    "react-native-vector-icons": "^10.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "@babel/preset-react": "^7.25.0",
+    "babel-loader": "^9.1.3",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "css-loader": "^6.10.0",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^3.3.4",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.0"
+  }
+}

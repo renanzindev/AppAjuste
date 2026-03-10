@@ -8,7 +8,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Avatar, Card, ListItem } from '@rneui/themed';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../Contexts/AuthContext';
 import EmployeeService from '../../Services/EmployeeService';
@@ -99,7 +99,7 @@ export default function HomeView() {
                             : null}
                         </ListItem.Subtitle>
                         <ListItem.Subtitle style={styles.employeeDate}>
-                          {Moment(employee.data_nascimento).format('DD/MM')}
+                          {dayjs(employee.data_nascimento).format('DD/MM')}
                         </ListItem.Subtitle>
                       </View>
                     </ListItem.Content>

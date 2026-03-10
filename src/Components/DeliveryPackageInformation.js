@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Card, ListItem } from '@rneui/themed';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 
 export default function DeliveryPackageInformation({ deliveryPackage }) {
   const styles = StyleSheet.create({
@@ -62,7 +62,7 @@ export default function DeliveryPackageInformation({ deliveryPackage }) {
 
           <Text style={styles.mgTop20}>
             <Text style={styles.bold}>CRIADO EM:</Text>{' '}
-            {Moment(deliveryPackage.created_at).format('DD/MM/YY HH:mm')}
+            {dayjs(deliveryPackage.created_at).format('DD/MM/YY HH:mm')}
           </Text>
           <Text>
             <Text style={styles.bold}>CRIADO POR:</Text>{' '}

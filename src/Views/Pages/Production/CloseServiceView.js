@@ -10,7 +10,7 @@ import {
 } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 import { Picker } from '@react-native-picker/picker';
 import { useRoute } from '@react-navigation/native';
 import BottomTabNavigator from '../../../Components/BottomTabNavigator';
@@ -363,7 +363,7 @@ export default function CloseServiceView() {
                 </Text>
                 <Text>
                   <Text style={styles.bold}>PREVISÃO DE ENTREGA:</Text>{' '}
-                  {Moment(osService.os.data_entrega).format('DD/MM/YY HH:mm')}
+                  {dayjs(osService.os.data_entrega).format('DD/MM/YY HH:mm')}
                 </Text>
                 <Text>
                   <Text style={styles.bold}>OS:</Text>{' '}
@@ -371,7 +371,7 @@ export default function CloseServiceView() {
                 </Text>
                 <Text>
                   <Text style={styles.bold}>DATA DA OS:</Text>{' '}
-                  {Moment(osService.os.created_at).format('DD/MM/YY HH:mm')}
+                  {dayjs(osService.os.created_at).format('DD/MM/YY HH:mm')}
                 </Text>
                 <Text>
                   <Text style={styles.bold}>CLIENTE:</Text>{' '}
