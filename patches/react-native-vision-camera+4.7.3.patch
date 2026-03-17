@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-vision-camera/android/CMakeLists.txt b/node_modules/react-native-vision-camera/android/CMakeLists.txt
+index 17097c1..fe0581d 100644
+--- a/node_modules/react-native-vision-camera/android/CMakeLists.txt
++++ b/node_modules/react-native-vision-camera/android/CMakeLists.txt
+@@ -55,6 +55,7 @@ target_include_directories(
+ )
+ 
+ # Link everything together
++target_link_options(VisionCamera PRIVATE "-Wl,-z,max-page-size=16384")
+ target_link_libraries(
+         ${PACKAGE_NAME}
+         ${LOG_LIB}                          # <-- Logcat logger

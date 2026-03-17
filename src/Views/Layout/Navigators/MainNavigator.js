@@ -3,16 +3,12 @@ import React from 'react';
 import {InteractionManager} from 'react-native';
 import {AuthContext} from '../../../Contexts/AuthContext';
 import SideMenuNavigator from './SideMenuNavigator';
-import {NavigationStyles} from '../../../Styles/NavigationStyles';
-import MainHeaderLeft from '../../../Components/MainHeaderLeft';
-// import MainHeaderRight from '../../../Components/MainHeaderRight';
-import MainHeaderTitle from '../../../Components/MainHeaderTitle';
 import ConfirmDeliveryView from '../../Pages/Logistics/ConfirmDeliveryView';
 
 const MainStack = createStackNavigator();
 
 export function MainNavigator() {
-  const {module, setSearch, displaySearch, searchInput} =
+  const {setSearch, displaySearch, searchInput} =
     React.useContext(AuthContext);
 
   const screenOptions = {
@@ -27,9 +23,9 @@ export function MainNavigator() {
   }, []);
 
   React.useEffect(() => {
-    if (displaySearch) {
+    if (displaySearch && searchInput?.current) {
       searchInput.current.focus();
-    } else {
+    } else if (!displaySearch) {
       setSearch('');
     }
   }, [displaySearch, searchInput, setSearch]);
@@ -40,10 +36,7 @@ export function MainNavigator() {
         name="SideMenuNavigator"
         component={SideMenuNavigator}
         options={{
-          headerTitle: () => <MainHeaderTitle />,
-          headerLeft: () => <MainHeaderLeft />,
-          // headerRight: () => <MainHeaderRight />,
-          headerStyle: NavigationStyles.header(module),
+          headerShown: false,
         }}
       />
       <MainStack.Screen

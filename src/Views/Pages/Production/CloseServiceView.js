@@ -17,9 +17,19 @@ import BottomTabNavigator from '../../../Components/BottomTabNavigator';
 import OsServiceService from '../../../Services/OsServiceService';
 import { AuthContext } from '../../../Contexts/AuthContext';
 import BarcodeScanner from '../../../Components/BarcodeScanner';
+import ScanSuccessFlashOverlay from '../../../Components/ScanSuccessFlashOverlay';
 
 export default function CloseServiceView() {
-  const { getUser, onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
+  const {
+    getUser,
+    onCamera,
+    setOnCamera,
+    barcodeValue,
+    setBarcodeValue,
+    setScanForItemIndex,
+    scanForItemIndex,
+    setContinuousItemScan,
+  } = React.useContext(AuthContext);
   const [serviceCode, setServiceCode] = React.useState('');
   const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [osService, setOsService] = React.useState(null);
@@ -158,17 +168,23 @@ export default function CloseServiceView() {
   };
 
   const SearchBarcodeService = () => {
+    setScanForItemIndex(null);
+    setContinuousItemScan(false);
     setBarcodeContext('service');
     setOnCamera(true);
   };
 
   const SearchBarcodeProduct = () => {
+    setScanForItemIndex(null);
+    setContinuousItemScan(false);
     setBarcodeContext('product');
     setOnCamera(true);
   };
 
   React.useEffect(() => {
     const searchBarcode = async () => {
+      if (!barcodeValue || scanForItemIndex != null) return;
+
       if (barcodeContext === 'service') {
         setBarcodeContext('');
         const code = JSON.parse(JSON.stringify(barcodeValue));
@@ -210,101 +226,6 @@ export default function CloseServiceView() {
   React.useEffect(() => {
     searchProduct();
   }, [productCode]);
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    containerScroll: {
-      minHeight: '100%',
-      backgroundColor: '#f9f9f9',
-    },
-    barcodeContainer: {
-      flexDirection: 'row',
-    },
-    barcodeInputContainer: {
-      width: '80%',
-    },
-    barcodeButtonContainer: {
-      width: '20%',
-    },
-    barcodeButton: {
-      height: 50,
-      backgroundColor: '#00bcd4',
-    },
-    searchServiceButton: {
-      height: 50,
-      backgroundColor: '#00bcd4',
-    },
-    searchServiceButtonDisabled: {
-      backgroundColor: '#ccf1f6',
-    },
-    cardTitle: {
-      textAlign: 'left',
-      fontSize: 20,
-    },
-    cardContent: {
-      textAlign: 'left',
-      fontSize: 18,
-    },
-    well: {
-      backgroundColor: '#f5f5f5',
-      marginTop: 0,
-      marginBottom: 30,
-      padding: 10,
-      borderWidth: 1,
-      borderColor: '#e8e8e8',
-    },
-    bold: {
-      fontWeight: 'bold',
-      lineHeight: 25,
-    },
-    label: {
-      fontWeight: 'bold',
-      fontSize: 12,
-      lineHeight: 25,
-      marginTop: 20,
-      marginBottom: 0,
-    },
-    pickerContainer: {
-      width: '100%',
-      height: 50,
-      borderWidth: 1,
-      borderColor: '#CBD5DD',
-      borderRadius: 2,
-      backgroundColor: 'white',
-    },
-    textError: {
-      color: 'red',
-      textTransform: 'uppercase',
-    },
-    textSuccess: {
-      color: '#8bc34a',
-      textTransform: 'uppercase',
-    },
-    textInfo: {
-      color: '#3B799A',
-      textTransform: 'uppercase',
-    },
-    confirmButton: {
-      marginTop: 10,
-      height: 60,
-      backgroundColor: '#8bc34a',
-    },
-    confirmButtonDisabled: {
-      backgroundColor: '#e7f3da',
-    },
-    lineSpaced: {
-      lineHeight: 25,
-    },
-    title: {
-      margin: 10,
-      textAlign: 'center',
-      textTransform: 'uppercase',
-      fontFamily: 'Arial',
-      fontSize: 18,
-      fontWeight: 'bold',
-    },
-  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -547,8 +468,113 @@ export default function CloseServiceView() {
       </ScrollView>
       <BottomTabNavigator />
       <Modal visible={onCamera}>
-        <BarcodeScanner />
+        <View style={{ flex: 1 }}>
+          <BarcodeScanner />
+          <ScanSuccessFlashOverlay />
+        </View>
       </Modal>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  containerScroll: {
+    borderRadius: 50,
+    minHeight: '100%',
+    backgroundColor: '#f9f9f9',
+  },
+  barcodeContainer: {
+    flexDirection: 'row',
+  },
+  barcodeInputContainer: {
+    borderRadius: 10,
+    width: '80%',
+  },
+  barcodeButtonContainer: {
+    width: '20%',
+    marginTop: '1%',
+  },
+  barcodeButton: {
+    borderRadius: 10,
+    height: 50,
+    backgroundColor: '#00bcd4',
+  },
+  searchServiceButton: {
+    borderRadius: 10,
+    height: 50,
+    backgroundColor: '#00bcd4',
+  },
+  searchServiceButtonDisabled: {
+    backgroundColor: '#ccf1f6',
+  },
+  cardTitle: {
+    textAlign: 'left',
+    fontSize: 20,
+  },
+  cardContent: {
+    textAlign: 'left',
+    fontSize: 18,
+  },
+  well: {
+    backgroundColor: '#f5f5f5',
+    marginTop: 0,
+    marginBottom: 30,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
+  },
+  bold: {
+    fontWeight: 'bold',
+    lineHeight: 25,
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    lineHeight: 25,
+    marginTop: 20,
+    marginBottom: 0,
+  },
+  pickerContainer: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#CBD5DD',
+    borderRadius: 2,
+    backgroundColor: 'white',
+  },
+  textError: {
+    color: 'red',
+    textTransform: 'uppercase',
+  },
+  textSuccess: {
+    color: '#8bc34a',
+    textTransform: 'uppercase',
+  },
+  textInfo: {
+    color: '#3B799A',
+    textTransform: 'uppercase',
+  },
+  confirmButton: {
+    borderRadius: 10,
+    marginTop: 10,
+    height: 60,
+    backgroundColor: '#8bc34a',
+  },
+  confirmButtonDisabled: {
+    backgroundColor: '#e7f3da',
+  },
+  lineSpaced: {
+    lineHeight: 25,
+  },
+  title: {
+    margin: 10,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontFamily: 'Arial',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});

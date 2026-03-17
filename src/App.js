@@ -15,12 +15,17 @@ import 'dayjs/locale/pt-br';
 const RootStack = createStackNavigator();
 
 export default () => {
-  const authService = new AuthService();
+  const authServiceRef = React.useRef(null);
+  if (!authServiceRef.current) authServiceRef.current = new AuthService();
+  const authService = authServiceRef.current;
   const searchInput = React.createRef();
 
   const [loggedIn, setLoggendIn] = React.useState(false);
   const [onCamera, setOnCamera] = React.useState(false);
   const [barcodeValue, setBarcodeValue] = React.useState('');
+  const [scanForItemIndex, setScanForItemIndex] = React.useState(null);
+  const [continuousItemScan, setContinuousItemScan] = React.useState(false);
+  const [scanSuccessFlashTrigger, setScanSuccessFlashTrigger] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
   const [displayModules, setDisplayModules] = React.useState(false);
   const [userModules, setUserModules] = React.useState([]);
@@ -29,20 +34,36 @@ export default () => {
   const [displaySearch, setDisplaySearch] = React.useState(false);
 
   const checkAuth = async () => {
-    const result = await authService.checkAuth();
-    setLoggendIn(result);
-    setLoaded(true);
+    try {
+      const result = await authService.checkAuth();
+      setLoggendIn(!!result);
+    } catch (e) {
+      if (__DEV__) console.warn('checkAuth error', e);
+      setLoggendIn(false);
+    } finally {
+      setLoaded(true);
+    }
   };
 
   const getUserModules = async () => {
-    await authService.defineTabs();
-    const loggedUser = await authService.getUser();
-    setUserModules(loggedUser.modules);
+    try {
+      await authService.defineTabs();
+      const loggedUser = await authService.getUser();
+      setUserModules(loggedUser?.modules ?? []);
+    } catch (e) {
+      if (__DEV__) console.warn('getUserModules error', e);
+      setUserModules([]);
+    }
   };
 
   const getDefaultModule = async () => {
-    const module = await authService.getModule();
-    setDefaultModule(module);
+    try {
+      const module = await authService.getModule();
+      setDefaultModule(module && typeof module === 'object' ? module : {});
+    } catch (e) {
+      if (__DEV__) console.warn('getDefaultModule error', e);
+      setDefaultModule({});
+    }
   };
 
   const auth = React.useMemo(
@@ -89,6 +110,12 @@ export default () => {
       setOnCamera,
       barcodeValue,
       setBarcodeValue,
+      scanForItemIndex,
+      setScanForItemIndex,
+      continuousItemScan,
+      setContinuousItemScan,
+      scanSuccessFlashTrigger,
+      setScanSuccessFlashTrigger,
     }),
     [
       defaultModule,
@@ -97,6 +124,9 @@ export default () => {
       displayModules,
       onCamera,
       barcodeValue,
+      scanForItemIndex,
+      continuousItemScan,
+      scanSuccessFlashTrigger,
     ],
   );
 

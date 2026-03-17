@@ -71,9 +71,10 @@ export default class Auth {
 
   getUser = async () => {
     try {
-      const result = (await AsyncStorage.getItem('@smartApp:user')) || {};
-
-      return JSON.parse(result);
+      const result = await AsyncStorage.getItem('@smartApp:user');
+      if (result != null && typeof result === 'string') {
+        return JSON.parse(result);
+      }
     } catch (error) {}
 
     return {};
@@ -81,9 +82,10 @@ export default class Auth {
 
   getModule = async () => {
     try {
-      const result = (await AsyncStorage.getItem('@smartApp:module')) || {};
-
-      return JSON.parse(result);
+      const result = await AsyncStorage.getItem('@smartApp:module');
+      if (result != null && typeof result === 'string') {
+        return JSON.parse(result);
+      }
     } catch (error) {}
 
     return {};

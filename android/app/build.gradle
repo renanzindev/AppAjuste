@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply plugin: "org.jetbrains.kotlin.android"
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -85,6 +86,16 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
+
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86_64"
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+            }
+        }
     }
 
     packaging {
@@ -115,12 +126,16 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', '../../node_modules/react-native/ReactAndroid/proguard-rules.pro', '../../node_modules/react-native-reanimated/android/proguard-rules.pro'
         }
     }
 }
 
 dependencies {
+    // SoLoader 0.12+ explícito: necessário para OpenSourceMergedSoMapping (libreact_featureflagsjni.so merged)
+    implementation("com.facebook.soloader:soloader:0.12.0")
+    // Edge-to-edge (Android 15 / SDK 35)
+    implementation("androidx.activity:activity:1.8.2")
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
@@ -128,6 +143,22 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+
+    // Autolinking: add native module projects as implementation dependencies.
+    // In RN 0.73+, the RNGP includes the projects via settings.gradle but does
+    // not automatically add them to the compile classpath of :app.
+    def autolinkFile = rootProject.file("build/generated/autolinking/autolinking.json")
+    if (autolinkFile.exists()) {
+        def json = new groovy.json.JsonSlurper().parse(autolinkFile)
+        json.dependencies?.each { pkgName, dep ->
+            if (dep.platforms?.android?.sourceDir) {
+                def cleanedName = pkgName
+                    .replaceAll(/[~*!'()]+/, '_')
+                    .replaceAll(/^@([\w\-.]+)\//, '$1_')
+                implementation project(":${cleanedName}")
+            }
+        }
     }
 }
 

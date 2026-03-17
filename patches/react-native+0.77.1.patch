@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/internal/featureflags/ReactNativeFeatureFlags.kt b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/internal/featureflags/ReactNativeFeatureFlags.kt
+index 43a8f23..5b89552 100644
+--- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/internal/featureflags/ReactNativeFeatureFlags.kt
++++ b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/internal/featureflags/ReactNativeFeatureFlags.kt
+@@ -23,9 +23,16 @@ package com.facebook.react.internal.featureflags
+  * This object provides access to internal React Native feature flags.
+  *
+  * All the methods are thread-safe if you handle `override` correctly.
++ *
++ * PATCH: Use LocalAccessor with NewArch disabled to avoid loading libreact_featureflagsjni.so
++ * when OpenSourceMergedSoMapping is not resolving (e.g. SoLoader init order / OSS build).
+  */
+ public object ReactNativeFeatureFlags {
+-  private var accessorProvider: () -> ReactNativeFeatureFlagsAccessor = { ReactNativeFeatureFlagsCxxAccessor() }
++  private var accessorProvider: () -> ReactNativeFeatureFlagsAccessor = {
++    ReactNativeFeatureFlagsLocalAccessor().apply {
++      override(ReactNativeNewArchitectureFeatureFlagsDefaults(false))
++    }
++  }
+   private var accessor: ReactNativeFeatureFlagsAccessor = accessorProvider()
+ 
+   /**

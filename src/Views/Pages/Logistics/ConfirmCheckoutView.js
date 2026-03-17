@@ -22,9 +22,19 @@ import DeliveryPackageInformation from '../../../Components/DeliveryPackageInfor
 import { AuthContext } from '../../../Contexts/AuthContext';
 
 import BarcodeScanner from '../../../Components/BarcodeScanner';
+import ScanSuccessFlashOverlay from '../../../Components/ScanSuccessFlashOverlay';
 
 export default function ConfirmCheckoutView() {
-  const { onCamera, setOnCamera, barcodeValue, setBarcodeValue } = React.useContext(AuthContext);
+  const [allItemsRead, setAllItemsRead] = React.useState(false);
+  const {
+    onCamera,
+    setOnCamera,
+    barcodeValue,
+    setBarcodeValue,
+    setScanForItemIndex,
+    scanForItemIndex,
+    setContinuousItemScan,
+  } = React.useContext(AuthContext);
   const [barcodeContext, setBarcodeContext] = React.useState(() => '');
   const [deliveryPackageCode, setDeliveryPackageCode] = React.useState('');
   const [deliveryPackage, setDeliveryPackage] = React.useState(null);
@@ -42,6 +52,8 @@ export default function ConfirmCheckoutView() {
   };
 
   const SearchBarcodePackage = () => {
+    setScanForItemIndex(null);
+    setContinuousItemScan(false);
     setBarcodeContext('deliveryPackage');
     setOnCamera(true);
   };
@@ -106,7 +118,11 @@ export default function ConfirmCheckoutView() {
 
   React.useEffect(() => {
     const searchBarcode = async () => {
-      if (barcodeContext === 'deliveryPackage') {
+      if (
+        barcodeContext === 'deliveryPackage' &&
+        scanForItemIndex == null &&
+        barcodeValue
+      ) {
         setBarcodeContext('');
         const code = JSON.parse(JSON.stringify(barcodeValue));
         await setDeliveryPackageCode(code);
@@ -124,64 +140,12 @@ export default function ConfirmCheckoutView() {
     autoSearch();
   }, [deliveryPackageCode]);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    containerScroll: {
-      minHeight: '100%',
-      backgroundColor: '#f9f9f9',
-      minWidth: '100%',
-    },
-    barcodeContainer: {
-      flexDirection: 'row',
-      marginTop: 20,
-    },
-    barcodeInputContainer: {
-      width: '80%',
-    },
-    barcodeButtonContainer: {
-      width: '20%',
-    },
-    barcodeButton: {
-      height: 50,
-      backgroundColor: '#00bcd4',
-    },
-    searchPackageButton: {
-      height: 50,
-      backgroundColor: '#00bcd4',
-    },
-    searchPackageButtonDisabled: {
-      backgroundColor: '#ccf1f6',
-    },
-    confirmButton: {
-      marginTop: 10,
-      height: 60,
-      backgroundColor: '#8bc34a',
-    },
-    confirmButtonDisabled: {
-      backgroundColor: '#e7f3da',
-    },
-    textError: {
-      color: 'red',
-      textTransform: 'uppercase',
-    },
-    title: {
-      margin: 10,
-      textAlign: 'center',
-      textTransform: 'uppercase',
-      fontFamily: 'Arial',
-      fontSize: 18,
-      fontWeight: 'bold',
-    },
-  });
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.containerScroll}>
         <Text style={styles.title}>RETIRADA DE LOTE</Text>
         <Divider />
-        <Card>
+        <Card containerStyle={styles.cardContainer}>
           <View style={styles.barcodeContainer}>
             <View style={styles.barcodeInputContainer}>
               <Input
@@ -224,15 +188,21 @@ export default function ConfirmCheckoutView() {
         </Card>
         {deliveryPackage ? (
           <>
-            <Card>
-              <DeliveryPackageInformation deliveryPackage={deliveryPackage} />
+            <Card containerStyle={styles.cardContainer}>
+              <DeliveryPackageInformation
+                deliveryPackage={deliveryPackage}
+                onAllItemsReadChange={setAllItemsRead}
+              />
               <Button
                 type="solid"
                 title="RETIRAR LOTE"
                 color="white"
                 buttonStyle={styles.confirmButton}
                 disabled={
-                  !deliveryPackageCode || !deliveryPackage || confirmingCheckout
+                  !deliveryPackageCode ||
+                  !deliveryPackage ||
+                  confirmingCheckout ||
+                  !allItemsRead
                 }
                 disabledStyle={styles.confirmButtonDisabled}
                 loading={confirmingCheckout}
@@ -244,8 +214,70 @@ export default function ConfirmCheckoutView() {
       </ScrollView>
       <BottomTabNavigator />
       <Modal visible={onCamera}>
-        <BarcodeScanner />
+        <View style={{ flex: 1 }}>
+          <BarcodeScanner />
+          <ScanSuccessFlashOverlay />
+        </View>
       </Modal>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderRadius: 50,
+  },
+  containerScroll: {
+    minHeight: '100%',
+    backgroundColor: '#f9f9f9',
+    minWidth: '100%',
+  },
+  barcodeContainer: {
+    flexDirection: 'row',
+    marginTop: 15,
+  },
+  barcodeInputContainer: {
+    width: '80%',
+  },
+  barcodeButtonContainer: {
+    width: '20%',
+  },
+  barcodeButton: {
+    borderRadius: 10,
+    height: 50,
+    backgroundColor: '#00bcd4',
+  },
+  searchPackageButton: {
+    borderRadius: 10,
+    height: 50,
+    backgroundColor: '#00bcd4',
+  },
+  searchPackageButtonDisabled: {
+    backgroundColor: '#ccf1f6',
+  },
+  confirmButton: {
+    borderRadius: 10,
+    marginTop: 10,
+    height: 60,
+    backgroundColor: '#8bc34a',
+  },
+  confirmButtonDisabled: {
+    backgroundColor: '#e7f3da',
+  },
+  textError: {
+    color: 'red',
+    textTransform: 'uppercase',
+  },
+  title: {
+    margin: 10,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontFamily: 'Arial',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  cardContainer: {
+    borderRadius: 16,
+  },
+});

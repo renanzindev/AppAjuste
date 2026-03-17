@@ -14,7 +14,9 @@ export default function ModulesBottomSheet() {
     setDisplayModules(false);
   };
 
-  return userModules ? (
+  const modules = Array.isArray(userModules) ? userModules : [];
+
+  return modules.length > 0 ? (
     <BottomSheet
       isVisible={displayModules}
       modalProps={{
@@ -22,7 +24,7 @@ export default function ModulesBottomSheet() {
         onRequestClose: cancelListItemOnPress,
       }}
     >
-      {userModules.map((module) => (
+      {modules.map((module) => (
         <ListItem
           key={module.id}
           onPress={() => {

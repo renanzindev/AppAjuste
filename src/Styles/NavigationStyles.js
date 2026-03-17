@@ -37,9 +37,10 @@ export const NavigationStyles = StyleSheet.create({
     marginLeft: 10,
   },
   header: (module) => {
+    const index = module && typeof module === 'object' ? module.index : undefined;
     return {
-      backgroundColor: headerColors[module.index]
-        ? headerColors[module.index]
+      backgroundColor: index != null && headerColors[index]
+        ? headerColors[index]
         : '#8BC34A',
       shadowColor: '#000',
       shadowOffset: {
@@ -49,7 +50,7 @@ export const NavigationStyles = StyleSheet.create({
       shadowOpacity: 0.3,
       shadowRadius: 4.65,
 
-      elevation: 8,
+      elevation: 4,
     };
   },
   searchInput: {

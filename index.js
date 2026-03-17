@@ -2,8 +2,16 @@
  * @format
  */
 import 'react-native-gesture-handler';
-import {AppRegistry} from 'react-native';
+import React from 'react';
+import { AppRegistry } from 'react-native';
 import App from './src/App';
-import {name as appName} from './app.json';
+import AppErrorBoundary from './src/Components/AppErrorBoundary';
+import { name as appName } from './app.json';
 
-AppRegistry.registerComponent(appName, () => App);
+const AppWithErrorBoundary = () => (
+  <AppErrorBoundary>
+    <App />
+  </AppErrorBoundary>
+);
+
+AppRegistry.registerComponent(appName, () => AppWithErrorBoundary);

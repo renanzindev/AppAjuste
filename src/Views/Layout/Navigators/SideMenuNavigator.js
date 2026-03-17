@@ -1,7 +1,9 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Icon } from '@rneui/themed';
-import { InteractionManager } from 'react-native';
+import MainHeaderLeft from '../../../Components/MainHeaderLeft';
+import MainHeaderTitle from '../../../Components/MainHeaderTitle';
+import { NavigationStyles } from '../../../Styles/NavigationStyles';
 import HomeView from '../../Pages/HomeView';
 import PayStubView from '../../Pages/PayStubView';
 import CloseServiceView from '../../Pages/Production/CloseServiceView';
@@ -22,17 +24,12 @@ const Drawer = createDrawerNavigator();
 
 export default function SideMenuNavigator() {
   const { module } = React.useContext(AuthContext);
-  const [loaded, setLoaded] = React.useState(false);
   const [views, setViews] = React.useState(null);
 
-  React.useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      setLoaded(true);
-    });
-  }, []);
+  const moduleIndex = module && typeof module === 'object' ? module.index : undefined;
 
   React.useEffect(() => {
-    switch (module.index) {
+    switch (moduleIndex) {
       case 'producao':
         setViews(
           <>
@@ -198,11 +195,17 @@ export default function SideMenuNavigator() {
         setViews(null);
         break;
     }
-  }, [module]);
+  }, [moduleIndex]);
 
-  return loaded ? (
+  return (
     <Drawer.Navigator
-      screenOptions={{headerShown: false}}
+      screenOptions={{
+        headerShown: true,
+        headerTitle: () => <MainHeaderTitle />,
+        headerLeft: () => <MainHeaderLeft />,
+        headerStyle: NavigationStyles.header(module || {}),
+        headerShadowVisible: false,
+      }}
       initialRouteName="HomeView"
       drawerContent={(props) => <LogoutButton {...props} />}
     >
@@ -233,5 +236,5 @@ export default function SideMenuNavigator() {
         }}
       />
     </Drawer.Navigator>
-  ) : null;
+  );
 }
