@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   containerScroll: {
-    minHeight: '100%',
+    flexGrow: 1,
     backgroundColor: '#f9f9f9',
     minWidth: '100%',
   },

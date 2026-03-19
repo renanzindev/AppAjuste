@@ -32,7 +32,7 @@ export default function PayStubView() {
     },
     containerScroll: {
       minWidth: '100%',
-      minHeight: '100%',
+      flexGrow: 1,
       backgroundColor: '#f9f9f9',
     },
     searchButton: {

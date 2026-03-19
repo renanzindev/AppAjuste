@@ -41,7 +41,7 @@ export default function HomeView() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <View>
         {user.funcionario ? (
           <ImageBackground
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerScroll: {
-    minHeight: '100%',
+    flexGrow: 1,
     backgroundColor: '#f9f9f9',
     minWidth: '100%',
   },

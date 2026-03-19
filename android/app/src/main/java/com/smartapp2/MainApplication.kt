@@ -12,10 +12,9 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 
 /**
- * IMPORTANTE: Para evitar crash "libreact_featureflagsjni.so not found" com newArchEnabled=false,
- * o patch em patches/react-native+0.77.1.patch é obrigatório. Ele faz o RN usar LocalAccessor
- * em vez de CxxAccessor, evitando carregar a .so. Após "npm install" o postinstall aplica os patches.
- * Se o erro voltar: rode "npm run postinstall" e depois "npm run android:clean-run".
+ * SoLoader com [OpenSourceMergedSoMapping] é obrigatório no RN 0.76+ (libs JNI mescladas em libreactnative).
+ * O manifesto da app força com.facebook.soloader.enabled=true porque dependências (ex.: Google Data Transport)
+ * injetam false e desativam o SoLoader — nesse caso o sistema tenta carregar libreact_featureflagsjni.so solta e falha.
  */
 class MainApplication : Application(), ReactApplication {
 

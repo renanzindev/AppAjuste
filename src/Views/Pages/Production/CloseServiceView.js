@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   containerScroll: {
     borderRadius: 50,
-    minHeight: '100%',
+    flexGrow: 1,
     backgroundColor: '#f9f9f9',
   },
   barcodeContainer: {

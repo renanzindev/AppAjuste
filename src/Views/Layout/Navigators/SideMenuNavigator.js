@@ -207,7 +207,7 @@ export default function SideMenuNavigator() {
         headerShadowVisible: false,
       }}
       initialRouteName="HomeView"
-      drawerContent={(props) => <LogoutButton {...props} />}
+      drawerContent={({ key, ...restProps }) => <LogoutButton {...restProps} />}
     >
       <Drawer.Screen
         name="HomeView"

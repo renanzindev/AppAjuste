@@ -43,10 +43,9 @@ export default function PendingDeliveriesView() {
     container: {
       flex: 1,
       backgroundColor: 'white',
-      minHeight: '100%',
     },
     containerScroll: {
-      minHeight: '100%',
+      flexGrow: 1,
       backgroundColor: '#f9f9f9',
       minWidth: '100%',
     },

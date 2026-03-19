@@ -146,9 +146,10 @@ export default function MyStockView() {
     { key: 'pending', title: 'PENDENTES' },
   ]);
 
-  const renderTabBar = (props) => (
+  const renderTabBar = ({ key, ...restProps }) => (
     <TabBar
-      {...props}
+      key={key}
+      {...restProps}
       activeColor="#007d71"
       inactiveColor="#5d585c"
       indicatorStyle={{ backgroundColor: '#007d71' }}
@@ -192,7 +193,7 @@ export default function MyStockView() {
       backgroundColor: '#f9f9f9',
     },
     containerScroll: {
-      minHeight: '100%',
+      flexGrow: 1,
       backgroundColor: '#f9f9f9',
     },
     titleContainer: {
@@ -558,8 +559,8 @@ export default function MyStockView() {
           <Dialog.Title title="Devolver Produto" />
           <Text>Você confirma que devolveu o Produto?</Text>
         </Dialog>
-        <BottomTabNavigator />
         </ScrollView>
+      <BottomTabNavigator />
       </SafeAreaView>
   );
 }

@@ -46,9 +46,10 @@ export default function ClosedServicesView() {
     getPageData();
   }, [isFocused]);
 
-  const renderTabBar = (props) => (
+  const renderTabBar = ({ key, ...restProps }) => (
     <TabBar
-      {...props}
+      key={key}
+      {...restProps}
       activeColor="#007d71"
       inactiveColor="#5d585c"
       indicatorStyle={{ backgroundColor: '#007d71' }}

@@ -7,10 +7,10 @@ import React from 'react';
 import { Button, Divider, Icon } from '@rneui/themed';
 import { AuthContext } from '../Contexts/AuthContext';
 
-export default function LogoutButton(props) {
+export default function LogoutButton({ key, ...props }) {
   const { logOut } = React.useContext(AuthContext);
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView key={key} {...props}>
       <DrawerItemList {...props} />
       <DrawerItem
         style={{

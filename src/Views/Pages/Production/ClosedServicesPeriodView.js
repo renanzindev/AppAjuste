@@ -61,7 +61,7 @@ export default function ClosedServicesPeriodView() {
       flex: 1,
     },
     containerScroll: {
-      minHeight: '100%',
+      flexGrow: 1,
       backgroundColor: '#f9f9f9',
     },
     searchButton: {
