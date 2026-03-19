@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 35
         targetSdkVersion = 35
-        versionCode = 32
+        versionCode = 33
         versionName = "1.4.3"
 
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
